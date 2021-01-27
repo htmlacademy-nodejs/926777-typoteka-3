@@ -1,7 +1,7 @@
 # Личный проект «Типотека» [![Build status][travis-image]][travis-url]
 
 * Студент: [Александра Шубина](https://up.htmlacademy.ru/nodejs/3/user/926777).
-* Наставник: `Неизвестно`.
+* Наставник: [Никита Куцелай](https://htmlacademy.ru/profile/id).
 
 ---
 
