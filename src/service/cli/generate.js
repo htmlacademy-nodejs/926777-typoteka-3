@@ -74,12 +74,12 @@ const generatePublication = (count) => (
 module.exports = {
   name: `--generate`,
   run(args) {
+    const [count] = args;
+    const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
+    const content = JSON.stringify(generatePublication(countOffer));
     if (args > 1000) {
       console.info(`Не больше 1000 объявлений`);
     } else {
-      const [count] = args;
-      const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
-      const content = JSON.stringify(generatePublication(countOffer));
       fs.writeFile(FILE_NAME, content, (err) => {
         if (err) {
           return console.error(`Can't write data to file...`);
