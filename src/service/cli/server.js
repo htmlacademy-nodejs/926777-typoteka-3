@@ -54,9 +54,9 @@ module.exports = {
     .listen(port)
     .on(`listening`, (err) => {
       if (err) {
-        return console.error(chalk.red(`Ошибка при создании сервера`, err));
+        return console.error(chalk.red(`Server error`, err));
       }
-      return console.info(chalk.green(`Ожидаю соединений на ${port}`));
+      return console.info(chalk.green(`Connection by ${port}`));
     });
   }
 };

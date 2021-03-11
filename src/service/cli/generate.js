@@ -45,7 +45,7 @@ module.exports = {
     const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
     const content = JSON.stringify(generatePublication(countOffer, titles, categories, sentences));
     if (args > 1000) {
-      console.info(chalk.red(`Не больше 1000 объявлений`));
+      console.info(chalk.red(`Limit exceeded. Maximum 1000`));
     } else {
       try {
         await fs.writeFile(FILE_NAME, content);
