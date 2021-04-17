@@ -25,5 +25,4 @@ app.set(`views`, path.resolve(__dirname, `templates`));
 app.set(`view engine`, `pug`);
 
 app.listen(DEFAULT_PORT);
-
 console.info(chalk.green(`Connection by ${DEFAULT_PORT}`));
