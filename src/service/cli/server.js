@@ -1,6 +1,5 @@
 'use strict';
 
-const chalk = require(`chalk`);
 const express = require(`express`);
 const {
   HttpCode,
@@ -8,16 +7,30 @@ const {
 } = require(`../../constants`);
 
 const createApiRouter = require(`../api`);
+const {getLogger} = require(`../lib/logger`);
 
 const DEFAULT_PORT = 3000;
+const logger = getLogger({name: `api`});
 
 const createApp = async () => {
   const app = express();
   app.use(express.json());
   app.use(API_PREFIX, await createApiRouter());
-  app.use((req, res) => res
-    .status(HttpCode.NOT_FOUND)
-    .send(`Not found`));
+  app.use((req, res, next) => {
+    logger.debug(`Request on route ${req.url}`);
+    res.on(`finish`, () => {
+      logger.info(`Response status code ${res.statusCode}`);
+    });
+    next();
+  });
+  app.use((req, res) => {
+    res.status(HttpCode.NOT_FOUND)
+      .send(`Not found`);
+    logger.error(`Route not found: ${req.url}`);
+  });
+  app.use((err, _req, _res, _next) => {
+    logger.error(`An error occurred on processing request: ${err.message}`);
+  });
 
   return app;
 };
@@ -30,11 +43,10 @@ module.exports = {
     const app = await createApp();
     app.listen(port)
         .on(`listening`, () => {
-          console.info(chalk.green(`Ожидаю соединений на ${port}`));
+          return logger.info(`Listening to connections on ${port}`);
         })
         .on(`error`, (err) => {
-          console.error(`Произошла ошибка: ${err.message}`);
-          process.exit(1);
+          return logger.error(`An error occurred: ${err.message}`);
         });
   }
 };

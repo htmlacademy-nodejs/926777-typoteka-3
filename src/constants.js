@@ -23,3 +23,8 @@ module.exports.HttpCode = {
 };
 
 module.exports.API_PREFIX = `/api`;
+
+module.exports.Env = {
+  DEVELOPMENT: `development`,
+  PRODUCTION: `production`
+};
