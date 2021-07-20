@@ -59,8 +59,8 @@ module.exports = {
     const categories = await readContent(FILE_CATEGORIES_PATH);
     const comments = await readContent(FILE_COMMENTS_PATH);
     const [count] = args;
-    const countOffer = Number.parseInt(count, 10) || DEFAULT_COUNT;
-    const content = JSON.stringify(generatePublication(countOffer, titles, categories, sentences, comments));
+    const countArticle = Number.parseInt(count, 10) || DEFAULT_COUNT;
+    const content = JSON.stringify(generatePublication(countArticle, titles, categories, sentences, comments));
     if (args > 1000) {
       console.info(chalk.red(`Limit exceeded. Maximum 1000`));
     } else {

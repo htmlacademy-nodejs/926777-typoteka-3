@@ -80,7 +80,7 @@ describe(`API returns a list of all articles`, () => {
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
   test(`Returns a list of 3 articless`, () => expect(response.body.length).toBe(3));
-  test(`First offer's id equals "GvYU_b"`, () => expect(response.body[0].id).toBe(`GvYU_b`));
+  test(`First article's id equals "GvYU_b"`, () => expect(response.body[0].id).toBe(`GvYU_b`));
 });
 
 describe(`API returns the article with given id`, () => {
@@ -168,7 +168,7 @@ describe(`API changes existent article`, () => {
 });
 
 
-test(`API returns status code 404 when trying to change non-existent offer`, () => {
+test(`API returns status code 404 when trying to change non-existent article`, () => {
   const app = createAPI();
   const validArticle = {
     title: `Как собрать камни бесконечности`,
@@ -301,7 +301,7 @@ test(`API refuses to delete non-existent comment`, () => {
     .expect(HttpCode.NOT_FOUND);
 });
 
-test(`API refuses to delete a comment to non-existent offer`, () => {
+test(`API refuses to delete a comment to non-existent article`, () => {
   const app = createAPI();
   return request(app)
     .delete(`/articles/NOEXST/comments/qpN3pO`)

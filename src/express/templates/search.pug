@@ -6,7 +6,18 @@ block content
       .search-page__wrapper
         h1 Поиск
         .search.search-page__form
-          form(action='#' method='get')
+          form(action='/search' method='get' autocomplete="off")
             label
               input(type='text' name='search' placeholder='Что ищем?')
             button.search__button.button.button--transparent(type='submit') Найти
+          section
+            each article in results
+              if !article
+                .search__result
+              else 
+                .search__result
+                  time.search__date(datetime=article.createdDate) #{article.createdDate}
+                  a.search__link(href='#') #{article.title}
+               
+                  
+              

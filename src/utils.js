@@ -32,3 +32,5 @@ module.exports.randomDate = (date1, date2) => {
     return new Date(randomValueBetween(date1, date2)).toLocaleDateString();
   }
 };
+
+module.exports.ensureArray = (value) => Array.isArray(value) ? value : [value];
