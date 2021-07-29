@@ -10,6 +10,10 @@ const {
   randomDate
 } = require(`../../utils`);
 
+const {
+  ExitCode
+} = require(`../../constants`);
+
 const {MAX_ID_LENGTH} = require(`../../constants`);
 
 const DEFAULT_COUNT = 1;
@@ -69,6 +73,7 @@ module.exports = {
         console.info(chalk.green(`Operation success. File created.`));
       } catch (err) {
         console.error(chalk.red(`Can't write data to file...`));
+        process.exit(ExitCode.ERROR);
       }
     }
   }
