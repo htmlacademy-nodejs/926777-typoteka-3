@@ -38,14 +38,14 @@ const generateComments = (count, id, userCount, comments) => (
   }))
 );
 
-const generatePublication = (count, titles, categories, userCount, sentences, comments) => (
+const generatePublication = (count, titles, categoryCount, userCount, sentences, comments) => (
   Array(count).fill({}).map((_, index) => ({
     userId: getRandomInt(1, userCount),
     title: titles[getRandomInt(0, titles.length - 1)],
     createdDate: randomDate(`01/02/2021`, `01/05/2021`),
     anounce: shuffle(sentences).slice(1, 5).join(` `),
     fullText: shuffle(sentences).slice(1, 5).join(` `),
-    сategory: [categories[getRandomInt(0, categories.length - 1)]],
+    category: [getRandomInt(1, categoryCount)],
     comments: generateComments(getRandomInt(1, MAX_COMMENTS), index + 1, userCount, comments),
     picture: getPictureFileName(getRandomInt(PictureRestrict.MIN, PictureRestrict.MAX))
   }))
@@ -88,12 +88,12 @@ module.exports = {
       }
     ];
 
-    const articles = generatePublication(countArticle, titles, categories,
+    const articles = generatePublication(countArticle, titles, categories.length,
         users.length, sentences, commentSentences);
 
     const comments = articles.flatMap((article) => article.comments);
 
-    const articleCategories = articles.flatMap((article, index) => ({articleId: index + 1, categoryId: categories.indexOf(article.category)}));
+    const articleCategories = articles.flatMap((article, index) => ({articleId: index + 1, categoryId: article.category[0]}));
 
     const userValues = users.map(({email, passwordHash, firstName, lastName, avatar}) =>
       `('${email}', '${passwordHash}', '${firstName}', '${lastName}', '${avatar}')`
@@ -102,7 +102,7 @@ module.exports = {
     const categoryValues = categories.map((name) => `('${name}')`).join(`,\n`);
 
     const articleValues = articles.map(({title, createdDate, anounce, fullText, picture, userId}) =>
-      `('${title}', '${createdDate}', '${anounce}', ${fullText}, '${picture}', ${userId})`
+      `('${title}', '${createdDate}', '${anounce}', '${fullText}', '${picture}', ${userId})`
     ).join(`,\n`);
 
     const articleCategoryValues = articleCategories.map(({articleId, categoryId}) =>
