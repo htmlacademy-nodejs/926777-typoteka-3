@@ -8,6 +8,7 @@ const {
 
 const createApiRouter = require(`../api`);
 const {getLogger} = require(`../lib/logger`);
+const sequelize = require(`../lib/sequelize`);
 
 const DEFAULT_PORT = 3000;
 const logger = getLogger({name: `api`});
@@ -43,10 +44,12 @@ module.exports = {
     const app = await createApp();
     app.listen(port)
         .on(`listening`, () => {
+          sequelize.authenticate();
           return logger.info(`Listening to connections on ${port}`);
         })
         .on(`error`, (err) => {
           return logger.error(`An error occurred: ${err.message}`);
         });
+    logger.info(`Connection to database established`);
   }
 };
