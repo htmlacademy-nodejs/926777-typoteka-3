@@ -3,7 +3,8 @@
 const express = require(`express`);
 const {
   HttpCode,
-  API_PREFIX
+  API_PREFIX,
+  ExitCode
 } = require(`../../constants`);
 
 const createApiRouter = require(`../api`);
@@ -42,14 +43,24 @@ module.exports = {
     const [customPort] = args;
     const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
     const app = await createApp();
+
+    logger.info(`Trying to connect to database...`);
+    try {
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(ExitCode.ERROR);
+    }
+
     app.listen(port)
-        .on(`listening`, () => {
-          sequelize.authenticate();
-          return logger.info(`Listening to connections on ${port}`);
-        })
-        .on(`error`, (err) => {
-          return logger.error(`An error occurred: ${err.message}`);
-        });
+    .on(`listening`, () => {
+      logger.info(`Listening to connections on ${port}`);
+    })
+    .on(`error`, (err) => {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(ExitCode.ERROR);
+    });
     logger.info(`Connection to database established`);
   }
 };
+
