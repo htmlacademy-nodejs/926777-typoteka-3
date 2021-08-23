@@ -35,9 +35,17 @@ const randomDate = (date1, date2) => {
 
 const ensureArray = (value) => Array.isArray(value) ? value : [value];
 
+const asyncMiddleware = (fn) => {
+  return (req, res, next) => {
+    Promise.resolve(fn(req, res, next))
+      .catch(next);
+  };
+};
+
 module.exports = {
   ensureArray,
   randomDate,
   shuffle,
-  getRandomInt
+  getRandomInt,
+  asyncMiddleware
 };
