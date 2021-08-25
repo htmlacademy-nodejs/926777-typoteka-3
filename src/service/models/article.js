@@ -14,7 +14,7 @@ const define = (sequelize) => Article.init({
     field: `full_text`,
     allowNull: false
   },
-  anounce: {
+  announce: {
     type: DataTypes.STRING,
     allowNull: false
   },
