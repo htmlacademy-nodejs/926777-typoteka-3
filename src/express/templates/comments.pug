@@ -1,6 +1,11 @@
 extends layout.pug
 
 block content
+  -
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleString();
+    }
   main.main-page.main-page--padding
     section.main-page__publication.publication
       h1.publication__title Комментарии
@@ -11,7 +16,7 @@ block content
               .publication__header
                 img.publication__list-image(src='/img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
                 b.publication__list-name Александр Петров
-                time.publication__item-time(datetime='2019-03-21T20:33') 21.03.2019, 20:33
+                time.publication__item-time(datetime=`${formatDate(comment.createdAt)}`) #{formatDate(comment.createdAt)}
               a.publication__item-text(href='#') #{comment.text}
               p.publication__text-strong #{comment.text}
               button.publication__button.button.button--close-item(type='button')

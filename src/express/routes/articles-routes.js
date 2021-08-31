@@ -5,7 +5,7 @@ const api = require(`../api`).getAPI();
 const multer = require(`multer`);
 const path = require(`path`);
 const {nanoid} = require(`nanoid`);
-const {ensureArray, asyncMiddleware} = require(`../../utils`);
+const {asyncMiddleware} = require(`../../utils`);
 
 const UPLOAD_DIR = `../upload/img/`;
 const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
@@ -22,7 +22,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage});
 
-articlesRouter.get(`/category/:id`, (req, res) => res.render(`articles-by-category`));
+articlesRouter.get(`/category/:id`, asyncMiddleware(async (req, res) => {
+  const {id} = req.params;
+  const [article, categories] = await Promise.all([
+    api.getArticle(id, {comments: false}),
+    api.getCategories(true)
+  ]);
+  res.render(`articles-by-category`, {article, categories});
+}));
 
 articlesRouter.get(`/add`, asyncMiddleware(async (req, res) => {
   const categories = await api.getCategories();
@@ -32,13 +39,17 @@ articlesRouter.get(`/add`, asyncMiddleware(async (req, res) => {
 articlesRouter.get(`/edit/:id`, asyncMiddleware(async (req, res) => {
   const {id} = req.params;
   const [article, categories] = await Promise.all([
-    api.getArticle(id),
-    api.getCategories()
+    api.getArticle(id, {comments: false}),
+    api.getCategories(true)
   ]);
   res.render(`new-post`, {article, categories});
 }));
 
-articlesRouter.get(`/:id`, (req, res) => res.render(`post`));
+articlesRouter.get(`/:id`, asyncMiddleware(async (req, res) => {
+  const {id} = req.params;
+  const article = await api.getArticle(id, {comments: true});
+  res.render(`post`, {article});
+}));
 
 articlesRouter.post(`/add`, upload.single(`upload`), asyncMiddleware(async (req, res) => {
   // в `body` содержатся текстовые данные формы
@@ -50,7 +61,7 @@ articlesRouter.post(`/add`, upload.single(`upload`), asyncMiddleware(async (req,
     title: body.title,
     announce: body.announce,
     createdDate: body.createdDate,
-    category: ensureArray(body.category),
+    categories: body.category,
   };
   try {
     await api.createArticle(articleData);

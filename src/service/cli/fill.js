@@ -43,7 +43,7 @@ const generatePublication = (count, titles, categoryCount, userCount, sentences,
     userId: getRandomInt(1, userCount),
     title: titles[getRandomInt(0, titles.length - 1)],
     createdDate: randomDate(`01/02/2021`, `01/05/2021`),
-    anounce: shuffle(sentences).slice(1, 5).join(` `),
+    announce: shuffle(sentences).slice(1, 5).join(` `),
     fullText: shuffle(sentences).slice(1, 5).join(` `),
     category: [getRandomInt(1, categoryCount)],
     comments: generateComments(getRandomInt(1, MAX_COMMENTS), index + 1, userCount, comments),
@@ -101,8 +101,8 @@ module.exports = {
 
     const categoryValues = categories.map((name) => `('${name}')`).join(`,\n`);
 
-    const articleValues = articles.map(({title, createdDate, anounce, fullText, picture, userId}) =>
-      `('${title}', '${createdDate}', '${anounce}', '${fullText}', '${picture}', ${userId})`
+    const articleValues = articles.map(({title, createdDate, announce, fullText, picture, userId}) =>
+      `('${title}', '${createdDate}', '${announce}', '${fullText}', '${picture}', ${userId})`
     ).join(`,\n`);
 
     const articleCategoryValues = articleCategories.map(({articleId, categoryId}) =>
@@ -119,7 +119,7 @@ module.exports = {
     INSERT INTO categories(name) VALUES
     ${categoryValues};
     ALTER TABLE articles DISABLE TRIGGER ALL;
-    INSERT INTO articles(title, created_date, anounce, full_text, picture, user_id) VALUES
+    INSERT INTO articles(title, created_date, announce, full_text, picture, user_id) VALUES
     ${articleValues};
     ALTER TABLE articles ENABLE TRIGGER ALL;
     ALTER TABLE article_categories DISABLE TRIGGER ALL;
