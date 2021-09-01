@@ -2,11 +2,12 @@
 
 const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
+const initDatabase = require(`../lib/init-db`);
 const {getLogger} = require(`../lib/logger`);
 
 const sequelize = require(`../lib/sequelize`);
-const defineModels = require(`../models`);
-const Aliase = require(`../models/aliase`);
+// const defineModels = require(`../models`);
+// const Aliase = require(`../models/aliase`);
 
 const {
   getRandomInt,
@@ -22,6 +23,11 @@ const FILE_SENTENCES_PATH = `./data/sentences.txt`;
 const FILE_TITLES_PATH = `./data/titles.txt`;
 const FILE_CATEGORIES_PATH = `./data/categories.txt`;
 const FILE_COMMENTS_PATH = `./data/comments.txt`;
+
+const PictureRestrict = {
+  MIN: 1,
+  MAX: 16,
+};
 
 const getRandomSubarray = (items) => {
   items = items.slice();
@@ -45,12 +51,15 @@ const generateComments = (count, comments) => (
   }))
 );
 
+const getPictureFileName = (number) => `item${number.toString().padStart(2, 0)}.jpg`;
+
 const generatePublication = (count, titles, categories, sentences, comments) => (
   Array(count).fill({}).map(() => ({
     title: titles[getRandomInt(0, titles.length - 1)],
     createdDate: randomDate(`01/02/2021`, `01/05/2021`),
     fullText: shuffle(sentences).slice(1, 2).join(` `),
     announce: shuffle(sentences).slice(1, 2).join(` `),
+    picture: getPictureFileName(getRandomInt(PictureRestrict.MIN, PictureRestrict.MAX)),
     categories: getRandomSubarray(categories),
     comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments),
   }))
@@ -78,25 +87,26 @@ module.exports = {
     }
     logger.info(`Connection to database established`);
 
-    const {Category, Article} = defineModels(sequelize);
-    await sequelize.sync({force: true});
+    // const {Category, Article} = defineModels(sequelize);
+    // await sequelize.sync({force: true});
 
     const sentences = await readContent(FILE_SENTENCES_PATH);
     const titles = await readContent(FILE_TITLES_PATH);
     const categories = await readContent(FILE_CATEGORIES_PATH);
     const comments = await readContent(FILE_COMMENTS_PATH);
 
-    const categoryModels = await Category.bulkCreate(
-        categories.map((item) => ({name: item}))
-    );
+    // const categoryModels = await Category.bulkCreate(
+    //     categories.map((item) => ({name: item}))
+    // );
 
     const [count] = args;
     const countArticle = Number.parseInt(count, 10) || DEFAULT_COUNT;
-    const articles = generatePublication(countArticle, titles, categoryModels, sentences, comments);
-    const articlePromises = articles.map(async (article) => {
-      const articleModel = await Article.create(article, {include: [Aliase.COMMENTS]});
-      await articleModel.addCategories(article.categories);
-    });
-    await Promise.all(articlePromises);
+    const articles = generatePublication(countArticle, titles, categories, sentences, comments);
+    // const articlePromises = articles.map(async (article) => {
+    //   const articleModel = await Article.create(article, {include: [Aliase.COMMENTS]});
+    //   await articleModel.addCategories(article.categories);
+    // });
+    // await Promise.all(articlePromises);
+    return initDatabase(sequelize, {articles, categories});
   }
 };
