@@ -11,8 +11,13 @@ module.exports = (app, articleService, commentService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    const {comments} = req.query;
-    const articles = await articleService.findAll(comments);
+    const {offset, limit, comments} = req.query;
+    let articles;
+    if (limit || offset) {
+      articles = await articleService.findPage({limit, offset});
+    } else {
+      articles = await articleService.findAll(comments);
+    }
     res.status(HttpCode.OK).json(articles);
   });
 
@@ -60,7 +65,6 @@ module.exports = (app, articleService, commentService) => {
   });
 
   route.get(`/:articleId/comments`, articleExist(articleService), async (req, res) => {
-    // const {article} = res.locals;
     const {articleId} = req.params;
     const comments = await commentService.findAll(articleId);
     res.status(HttpCode.OK)
@@ -80,7 +84,6 @@ module.exports = (app, articleService, commentService) => {
   });
 
   route.post(`/:articleId/comments`, [articleExist(articleService), commentValidator], async (req, res) => {
-    // const {article} = res.locals;
     const {articleId} = req.params;
     const comment = await commentService.create(articleId, req.body);
     return res.status(HttpCode.CREATED)
