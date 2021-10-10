@@ -42,10 +42,15 @@ const asyncMiddleware = (fn) => {
   };
 };
 
+// const prepareErrors = (errors) => {
+//   return errors.response.data.split(`\n`);
+// };
+
 module.exports = {
   ensureArray,
   randomDate,
   shuffle,
   getRandomInt,
-  asyncMiddleware
+  asyncMiddleware,
+  // prepareErrors
 };

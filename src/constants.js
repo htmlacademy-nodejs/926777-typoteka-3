@@ -22,6 +22,13 @@ const HttpCode = {
   UNAUTHORIZED: 401,
 };
 
+const HttpMethod = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
 const API_PREFIX = `/api`;
 
 const Env = {
@@ -36,5 +43,6 @@ module.exports = {
   ExitCode,
   HttpCode,
   API_PREFIX,
-  Env
+  Env,
+  HttpMethod
 };
