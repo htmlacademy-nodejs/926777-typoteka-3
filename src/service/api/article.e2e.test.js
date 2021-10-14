@@ -86,38 +86,38 @@ describe(`API returns the article with given id`, () => {
   test(`Article's title is "Как собрать камни бесконечности"`, () => expect(response.body.title).toBe(`Как собрать камни бесконечности`));
 });
 
-// describe(`API creates the article if data is valid`, () => {
-//   const newArticle = {
-//     title: `Как собрать камни бесконечности`,
-//     createdDate: `04.01.2021`,
-//     announce: `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Это один из лучших рок-музыкантов.`,
-//     fullText: `Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Ёлки — это не просто красивое дерево. Это прочная древесина. Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры.`,
-//     category: [`Без рамки`],
-//     picture: `pic.jpg`
-//   };
-//   let response;
-//   let app;
+describe(`API creates the article if data is valid`, () => {
+  const newArticle = {
+    title: `Как собрать камни бесконечности`,
+    createdDate: `04.01.2021`,
+    announce: `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего.`,
+    fullText: `Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Ёлки — это не просто красивое дерево. Это прочная древесина. Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры.`,
+    picture: `pic.jpg`,
+    categories: [1]
+  };
+  let response;
+  let app;
 
-//   beforeAll(async () => {
-//     app = await createAPI();
-//     response = await request(app)
-//     .post(`/articles`)
-//     .send(newArticle);
-//   });
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app)
+    .post(`/articles`)
+    .send(newArticle);
+  });
 
-//   test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
-//   test(`Articles count is changed`, () => request(app)
-//     .get(`/articles`)
-//     .expect((res) => expect(res.body.length).toBe(4))
-//   );
-// });
+  test(`Status code 201`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
+  test(`Articles count is changed`, () => request(app)
+    .get(`/articles`)
+    .expect((res) => expect(res.body.length).toBe(4))
+  );
+});
 
 describe(`API refuses to create the article if data is invalid`, () => {
   const newArticle = {
     title: `Пиу пиу`,
     announce: `Олала.`,
     fullText: `Эгегей.`,
-    category: [`Абра кадабра`]
+    categories: [1, 2],
   };
   let app;
 
@@ -135,50 +135,78 @@ describe(`API refuses to create the article if data is invalid`, () => {
         .expect(HttpCode.BAD_REQUEST);
     }
   });
+
+  test(`When field type is wrong response code is 400`, async () => {
+    const badArticles = [
+      {...newArticle, picture: 12345},
+      {...newArticle, categories: `Железо`}
+    ];
+    for (const badArticle of badArticles) {
+      await request(app)
+        .post(`/articles`)
+        .send(badArticle)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
+
+
+  test(`When field value is wrong response code is 400`, async () => {
+    const badArticles = [
+      {...newArticle, title: `too short`},
+      {...newArticle, categories: []}
+    ];
+    for (const badArticle of badArticles) {
+      await request(app)
+        .post(`/articles`)
+        .send(badArticle)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+  });
 });
 
-// describe(`API changes existent article`, () => {
-//   const newArticle = {
-//     title: `Как собрать камни бесконечности`,
-//     createdDate: `04.01.2021`,
-//     announce: `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Это один из лучших рок-музыкантов.`,
-//     fullText: `Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Ёлки — это не просто красивое дерево. Это прочная древесина. Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры.`,
-//     category: [`Без рамки`],
-//     picture: `pic.jpg`
-//   };
-//   let app;
-//   let response;
+describe(`API changes existent article`, () => {
+  const newArticle = {
+    title: `Как собрать камни бесконечности`,
+    createdDate: `04.01.2021`,
+    announce: `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего.`,
+    fullText: `Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Ёлки — это не просто красивое дерево. Это прочная древесина. Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры.`,
+    picture: `pic.jpg`,
+    categories: [1]
+  };
+  let app;
+  let response;
 
-//   beforeAll(async () => {
-//     app = await createAPI();
-//     response = await request(app)
-//     .put(`/articles/1`)
-//     .send(newArticle);
-//   });
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app)
+    .put(`/articles/1`)
+    .send(newArticle);
+  });
 
-//   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-//   test(`Article is really changed`, () => request(app)
-//     .get(`/articles/1`)
-//     .expect((res) => expect(res.body.title).toBe(`Как собрать камни бесконечности`))
-//   );
-// });
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
+  test(`Article is really changed`, () => request(app)
+    .get(`/articles/1`)
+    .expect((res) => expect(res.body.title).toBe(`Как собрать камни бесконечности`))
+  );
+});
 
 
-// test(`API returns status code 404 when trying to change non-existent article`, async () => {
-//   const validArticle = {
-//     title: `Как собрать камни бесконечности`,
-//     createdDate: `04.01.2021`,
-//     announce: `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Это один из лучших рок-музыкантов.`,
-//     fullText: `Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Ёлки — это не просто красивое дерево. Это прочная древесина. Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры.`,
-//     category: [`Без рамки`]
-//   };
-//   const app = await createAPI();
+test(`API returns status code 404 when trying to change non-existent article`, async () => {
+  const validArticle = {
+    title: `Как собрать камни бесконечности`,
+    createdDate: `04.01.2021`,
+    announce: `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего.`,
+    fullText: `Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Ёлки — это не просто красивое дерево. Это прочная древесина. Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры.`,
+    picture: `pic.jpg`,
+    categories: [1]
+  };
+  const app = await createAPI();
 
-//   return request(app)
-//     .put(`/articles/333FFFrrr`)
-//     .send(validArticle)
-//     .expect(HttpCode.NOT_FOUND);
-// });
+  return request(app)
+    .put(`/articles/333`)
+    .send(validArticle)
+    .expect(HttpCode.NOT_FOUND);
+});
 
 test(`API returns status code 400 when trying to change the article with invalid data`, async () => {
   const invalidArticle = {
@@ -215,36 +243,9 @@ describe(`API correctly deletes the article`, () => {
 test(`API refuses to delete non-existent article`, async () => {
   const app = await createAPI();
   return request(app)
-    .delete(`/articles/NOEXST`)
+    .delete(`/articles/555`)
     .expect(HttpCode.NOT_FOUND);
 });
-
-// test(`When field type is wrong response code is 400`, async () => {
-//   const badArticles = [
-//     {...newArticle, picture: 12345},
-//     {...newArticle, categories: `Железо`}
-//   ];
-//   for (const badArticle of badArticles) {
-//     await request(app)
-//       .post(`/articles`)
-//       .send(badArticle)
-//       .expect(HttpCode.BAD_REQUEST);
-//   }
-// });
-
-// test(`When field value is wrong response code is 400`, async () => {
-//   const badOffers = [
-//     {...newOffer, sum: -1},
-//     {...newOffer, title: `too short`},
-//     {...newOffer, categories: []}
-//   ];
-//   for (const badOffer of badOffers) {
-//     await request(app)
-//       .post(`/offers`)
-//       .send(badOffer)
-//       .expect(HttpCode.BAD_REQUEST);
-//   }
-// });
 
 // тесты для комментариев
 describe(`API returns a list of comments to given article`, () => {

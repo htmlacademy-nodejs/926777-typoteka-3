@@ -13,6 +13,8 @@ const UPLOAD_DIR = `upload`;
 
 const app = express();
 
+app.use(express.urlencoded({extended: false}));
+
 app.use(express.static(path.resolve(__dirname, PUBLIC_DIR)));
 app.use(express.static(path.resolve(__dirname, UPLOAD_DIR)));
 

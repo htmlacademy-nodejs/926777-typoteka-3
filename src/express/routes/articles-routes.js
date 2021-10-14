@@ -5,7 +5,7 @@ const api = require(`../api`).getAPI();
 const multer = require(`multer`);
 const path = require(`path`);
 const {nanoid} = require(`nanoid`);
-const {asyncMiddleware} = require(`../../utils`);
+const {asyncMiddleware, ensureArray} = require(`../../utils`);
 
 const UPLOAD_DIR = `../upload/img/`;
 const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
@@ -57,7 +57,7 @@ articlesRouter.post(`/add`, upload.single(`upload`), asyncMiddleware(async (req,
     title: body.title,
     announce: body.announce,
     createdDate: body.createdDate,
-    categories: body.category,
+    categories: ensureArray(body.category),
   };
   try {
     await api.createArticle(articleData);
@@ -81,7 +81,7 @@ articlesRouter.post(`/edit/:id`, upload.single(`upload`), asyncMiddleware(async 
     picture: file ? file.filename : body[`old-image`],
     title: body.title,
     createdDate: body.date,
-    announce: body.announcement,
+    announce: body.announce,
     fullText: body[`full-text`],
     categories: [...body.category] || []
   };
