@@ -9,14 +9,13 @@ const ErrorCommentMessage = {
 };
 
 const schema = Joi.object({
-  text: Joi.string().min(20).messages({
+  text: Joi.string().min(20).required().messages({
     'string.min': ErrorCommentMessage.TEXT
   })
 });
 
 module.exports = (req, res, next) => {
   const comments = req.body;
-  console.log("midleware", comments)
 
   const {error} = schema.validate(comments, {abortEarly: false});
   if (error) {
