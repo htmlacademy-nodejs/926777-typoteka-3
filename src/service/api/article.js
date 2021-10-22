@@ -86,8 +86,9 @@ module.exports = (app, articleService, commentService) => {
 
   route.post(`/:articleId/comments`, [routeParamsValidator, articleExist(articleService), commentValidator], async (req, res) => {
     const {articleId} = req.params;
-    const comment = await commentService.create(articleId, req.body);
+    console.log("БЭКЕНД", req.body)
+    const comments = await commentService.create(articleId, req.body);
     return res.status(HttpCode.CREATED)
-      .json(comment);
+      .json(comments);
   });
 };

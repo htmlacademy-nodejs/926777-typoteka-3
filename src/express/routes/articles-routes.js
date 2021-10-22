@@ -102,9 +102,14 @@ articlesRouter.get(`/:id`, asyncMiddleware(async (req, res) => {
 
 articlesRouter.post(`/:id/comments`, asyncMiddleware(async (req, res) => {
   const {id} = req.params;
-  const {comments} = req.body;
+  //const {comment} = req.body;
+  const {body} = req;
+  const data = {
+    text: body.comments
+  }
+  console.log("!!!!!req.body", req.body)
   try {
-    await api.createComment(id, {text: comments});
+    await api.createComment(id, data);
     res.redirect(`/articles/${id}`);
   } catch (errors) {
     res.redirect(`/articles/${id}?error=${encodeURIComponent(errors.response.data)}`);

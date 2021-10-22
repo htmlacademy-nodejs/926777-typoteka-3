@@ -7,6 +7,7 @@ class CommentService {
   }
 
   async create(articleId, comment) {
+    console.log("dataservise", articleId, comment)
     return this._Comment.create({
       articleId,
       ...comment
