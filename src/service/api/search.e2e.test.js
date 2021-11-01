@@ -5,6 +5,7 @@ const request = require(`supertest`);
 const Sequelize = require(`sequelize`);
 
 const initDB = require(`../lib/init-db`);
+const passwordUtils = require(`../lib/password`);
 const search = require(`./search`);
 const DataService = require(`../data-service/search`);
 
@@ -14,6 +15,7 @@ const mockCategories = [`Без рамки`, `Железо`, `Разное`];
 
 const mockData = [
   {
+    "user": `ivanov@example.com`,
     "title": `Как собрать камни бесконечности`,
     "createdDate": `04.01.2021`,
     "announce": `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Это один из лучших рок-музыкантов.`,
@@ -21,9 +23,13 @@ const mockData = [
     "categories": [`Без рамки`],
     "picture": `item0NaN.jpg`,
     "comments": [
-      {"text": `Совсем немного... Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы!`}
+      {
+        "user": `petrov@example.com`,
+        "text": `Совсем немного... Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы!`
+      }
     ]
   }, {
+    "user": `petrov@example.com`,
     "title": `Учим HTML и CSS`,
     "createdDate": `03.01.2021`,
     "announce": `Достичь успеха помогут ежедневные повторения. Ёлки — это не просто красивое дерево. Это прочная древесина. Собрать камни бесконечности легко, если вы прирожденный герой. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете.`,
@@ -31,12 +37,25 @@ const mockData = [
     "categories": [`Железо`],
     "picture": `item0NaN.jpg`,
     "comments": [
-      {"text": `Это где ж такие красоты?`},
-      {"text": `Мне кажется или я уже читал это где-то? Мне не нравится ваш стиль. Ощущение, что вы меня поучаете.`},
-      {"text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Давно не пользуюсь стационарными компьютерами. Ноутбуки победили. Согласен с автором!`},
-      {"text": `Давно не пользуюсь стационарными компьютерами. Ноутбуки победили. Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы!`}
+      {
+        "user": `ivanov@example.com`,
+        "text": `Это где ж такие красоты?`
+      },
+      {
+        "user": `ivanov@example.com`,
+        "text": `Мне кажется или я уже читал это где-то? Мне не нравится ваш стиль. Ощущение, что вы меня поучаете.`
+      },
+      {
+        "user": `ivanov@example.com`,
+        "text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Давно не пользуюсь стационарными компьютерами. Ноутбуки победили. Согласен с автором!`
+      },
+      {
+        "user": `ivanov@example.com`,
+        "text": `Давно не пользуюсь стационарными компьютерами. Ноутбуки победили. Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы!`
+      }
     ]
   }, {
+    "user": `petrov@example.com`,
     "title": `Борьба с прокрастинацией`,
     "createdDate": `04.01.2021`,
     "announce": `Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Достичь успеха помогут ежедневные повторения. Это один из лучших рок-музыкантов.`,
@@ -44,8 +63,28 @@ const mockData = [
     "categories": [`Разное`],
     "picture": `item0NaN.jpg`,
     "comments": [
-      {"text": `Планируете записать видосик на эту тему? Совсем немного... Согласен с автором!`}
+      {
+        "user": `ivanov@example.com`,
+        "text": `Планируете записать видосик на эту тему? Совсем немного... Согласен с автором!`
+      }
     ]
+  }
+];
+
+const mockUsers = [
+  {
+    firstName: `Иван`,
+    lastName: `Иванов`,
+    email: `ivanov@example.com`,
+    passwordHash: passwordUtils.hashSync(`ivanov`),
+    avatar: `avatar01.jpg`
+  },
+  {
+    firstName: `Пётр`,
+    lastName: `Петров`,
+    email: `petrov@example.com`,
+    passwordHash: passwordUtils.hashSync(`petrov`),
+    avatar: `avatar02.jpg`
   }
 ];
 
@@ -55,7 +94,7 @@ const app = express();
 app.use(express.json());
 
 beforeAll(async () => {
-  await initDB(mockDB, {categories: mockCategories, articles: mockData});
+  await initDB(mockDB, {categories: mockCategories, articles: mockData, users: mockUsers});
   search(app, new DataService(mockDB));
 });
 

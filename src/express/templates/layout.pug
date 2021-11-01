@@ -54,6 +54,11 @@ body
     if message
       .server-error= message
 
+  mixin errorMessages(messages)
+    each message in messages
+      ul.form__errors
+        li.form__error= message
+
   include partials/header.pug
   block content
   include partials/footer.pug

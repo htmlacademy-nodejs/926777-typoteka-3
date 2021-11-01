@@ -5,6 +5,7 @@ const request = require(`supertest`);
 const Sequelize = require(`sequelize`);
 
 const initDB = require(`../lib/init-db`);
+const passwordUtils = require(`../lib/password`);
 const article = require(`./article`);
 const DataService = require(`../data-service/article`);
 const CommentService = require(`../data-service/comment`);
@@ -15,6 +16,7 @@ const mockCategories = [`Без рамки`, `Железо`, `Разное`];
 
 const mockData = [
   {
+    "user": `ivanov@example.com`,
     "title": `Как собрать камни бесконечности`,
     "createdDate": `04.01.2021`,
     "announce": `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Это один из лучших рок-музыкантов.`,
@@ -22,9 +24,13 @@ const mockData = [
     "categories": [`Без рамки`],
     "picture": `item0NaN.jpg`,
     "comments": [
-      {"text": `Совсем немного... Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы!`}
+      {
+        "user": `petrov@example.com`,
+        "text": `Совсем немного... Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы!`
+      }
     ]
   }, {
+    "user": `petrov@example.com`,
     "title": `Учим HTML и CSS`,
     "createdDate": `03.01.2021`,
     "announce": `Достичь успеха помогут ежедневные повторения. Ёлки — это не просто красивое дерево. Это прочная древесина. Собрать камни бесконечности легко, если вы прирожденный герой. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете.`,
@@ -32,12 +38,25 @@ const mockData = [
     "categories": [`Железо`],
     "picture": `item0NaN.jpg`,
     "comments": [
-      {"text": `Это где ж такие красоты?`},
-      {"text": `Мне кажется или я уже читал это где-то? Мне не нравится ваш стиль. Ощущение, что вы меня поучаете.`},
-      {"text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Давно не пользуюсь стационарными компьютерами. Ноутбуки победили. Согласен с автором!`},
-      {"text": `Давно не пользуюсь стационарными компьютерами. Ноутбуки победили. Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы!`}
+      {
+        "user": `ivanov@example.com`,
+        "text": `Это где ж такие красоты?`
+      },
+      {
+        "user": `ivanov@example.com`,
+        "text": `Мне кажется или я уже читал это где-то? Мне не нравится ваш стиль. Ощущение, что вы меня поучаете.`
+      },
+      {
+        "user": `ivanov@example.com`,
+        "text": `Мне не нравится ваш стиль. Ощущение, что вы меня поучаете. Давно не пользуюсь стационарными компьютерами. Ноутбуки победили. Согласен с автором!`
+      },
+      {
+        "user": `ivanov@example.com`,
+        "text": `Давно не пользуюсь стационарными компьютерами. Ноутбуки победили. Мне кажется или я уже читал это где-то? Плюсую, но слишком много буквы!`
+      }
     ]
   }, {
+    "user": `petrov@example.com`,
     "title": `Борьба с прокрастинацией`,
     "createdDate": `04.01.2021`,
     "announce": `Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Достичь успеха помогут ежедневные повторения. Это один из лучших рок-музыкантов.`,
@@ -45,14 +64,34 @@ const mockData = [
     "categories": [`Разное`],
     "picture": `item0NaN.jpg`,
     "comments": [
-      {"text": `Планируете записать видосик на эту тему? Совсем немного... Согласен с автором!`}
+      {
+        "user": `ivanov@example.com`,
+        "text": `Планируете записать видосик на эту тему? Совсем немного... Согласен с автором!`
+      }
     ]
+  }
+];
+
+const mockUsers = [
+  {
+    firstName: `Иван`,
+    lastName: `Иванов`,
+    email: `ivanov@example.com`,
+    passwordHash: passwordUtils.hashSync(`ivanov`),
+    avatar: `avatar01.jpg`
+  },
+  {
+    firstName: `Пётр`,
+    lastName: `Петров`,
+    email: `petrov@example.com`,
+    passwordHash: passwordUtils.hashSync(`petrov`),
+    avatar: `avatar02.jpg`
   }
 ];
 
 const createAPI = async () => {
   const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
-  await initDB(mockDB, {categories: mockCategories, articles: mockData});
+  await initDB(mockDB, {categories: mockCategories, articles: mockData, users: mockUsers});
   const app = express();
   app.use(express.json());
   article(app, new DataService(mockDB), new CommentService(mockDB));
@@ -93,7 +132,8 @@ describe(`API creates the article if data is valid`, () => {
     announce: `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего.`,
     fullText: `Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Ёлки — это не просто красивое дерево. Это прочная древесина. Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры.`,
     picture: `pic.jpg`,
-    categories: [1]
+    categories: [1],
+    userId: 1
   };
   let response;
   let app;
@@ -118,6 +158,7 @@ describe(`API refuses to create the article if data is invalid`, () => {
     announce: `Олала.`,
     fullText: `Эгегей.`,
     categories: [1, 2],
+    userId: 1
   };
   let app;
 
@@ -171,7 +212,8 @@ describe(`API changes existent article`, () => {
     announce: `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего.`,
     fullText: `Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Ёлки — это не просто красивое дерево. Это прочная древесина. Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры.`,
     picture: `pic.jpg`,
-    categories: [1]
+    categories: [1],
+    userId: 1
   };
   let app;
   let response;
@@ -198,7 +240,8 @@ test(`API returns status code 404 when trying to change non-existent article`, a
     announce: `Золотое сечение — соотношение двух величин, гармоническая пропорция. Помните, небольшое количество ежедневных упражнений лучше, чем один раз, но много. Вы можете достичь всего.`,
     fullText: `Бороться с прокрастинацией несложно. Просто действуйте. Маленькими шагами. Этот смартфон — настоящая находка. Большой и яркий экран, мощнейший процессор — всё это в небольшом гаджете. Ёлки — это не просто красивое дерево. Это прочная древесина. Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры.`,
     picture: `pic.jpg`,
-    categories: [1]
+    categories: [1],
+    userId: 1
   };
   const app = await createAPI();
 
@@ -214,6 +257,7 @@ test(`API returns status code 400 when trying to change the article with invalid
     announce: `невалидный.`,
     fullText: `объект.`,
     category: [`нет поля createdDate`],
+    userId: 1
   };
   const app = await createAPI();
 
@@ -264,7 +308,8 @@ describe(`API returns a list of comments to given article`, () => {
 
 describe(`API creates a comment if data is valid`, () => {
   const newComment = {
-    text: `Валидному комментарию достаточно этого поля`
+    text: `Валидному комментарию достаточно этого поля`,
+    userId: 1
   };
   let app;
   let response;
@@ -288,7 +333,8 @@ test(`API refuses to create a comment to non-existent article and returns status
   return request(app)
     .post(`/articles/20/comments`)
     .send({
-      text: `Неважно`
+      text: `Неважно`,
+      userId: 1
     })
     .expect(HttpCode.NOT_FOUND);
 });

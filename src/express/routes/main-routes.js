@@ -3,6 +3,7 @@
 const {Router} = require(`express`);
 const api = require(`../api`).getAPI();
 const {asyncMiddleware} = require(`../../utils`);
+const upload = require(`../../service/middlewares/upload`);
 
 const mainRouter = new Router();
 
@@ -25,7 +26,29 @@ mainRouter.get(`/`, asyncMiddleware(async (req, res) => {
   res.render(`main`, {articles, categories, page, totalPages});
 }));
 
-mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
+mainRouter.get(`/register`, (req, res) => {
+  res.render(`sign-up`);
+});
+
+mainRouter.post(`/register`, upload.single(`upload`), asyncMiddleware(async (req, res) => {
+  const {body, file} = req;
+  const userData = {
+    avatar: file ? file.filename : ``,
+    firstName: body.firstName,
+    lastName: body.lastName,
+    email: body.email,
+    password: body.password,
+    passwordRepeated: body[`repeat-password`]
+  };
+  try {
+    await api.createUser(userData);
+    res.redirect(`/login`);
+  } catch (errors) {
+    const errorMessages = errors.response.data.split(`\n`);
+    res.render(`sign-up`, {errorMessages});
+  }
+}));
+
 mainRouter.get(`/login`, (req, res) => res.render(`login`));
 
 mainRouter.get(`/search`, asyncMiddleware(async (req, res) => {
