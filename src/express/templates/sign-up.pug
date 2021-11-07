@@ -5,7 +5,7 @@ block content
     h1.visually-hidden Регистрация пользователя
     section
       .popup.popup--registration.popup--anti
-        a.popup__button.button.button--popup-close(aria-label='Закрыть окно')
+        a.popup__button.button.button--popup-close(aria-label='Закрыть окно' href='/')
           | Закрыть
           | окно
         h2.popup__title Регистрация
@@ -26,14 +26,14 @@ block content
             .form__field
               label
                 input(type='password' name='repeat-password' placeholder='Повтор пароля' required='')
+            if errorMessages
+              .form__validation-error
+                p.form__error-message При регистрации произошли ошибки:
+                +errorMessages(errorMessages)
             .form__image-loader
               a.form__avatar.avatar
                 img(src='/img/icons/smile.svg' alt='аватар пользователя')
               label
                 input.visually-hidden(type='file' name='upload')
                 | Загрузить фото профиля
-            if errorMessages
-              .form__validation-error
-                p.form__error-message При регистрации произошли ошибки:
-                +errorMessages(errorMessages)
             button.form__submit-btn.form__submit-btn--register.button.button--colored(type='submit') Зарегистрироваться

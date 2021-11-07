@@ -46,11 +46,20 @@ const asyncMiddleware = (fn) => {
 //   return errors.response.data.split(`\n`);
 // };
 
+const getAdmin = (user) => {
+  let admin = false;
+  if (user && user.id === 1) {
+    admin = true;
+  }
+  return admin;
+};
+
 module.exports = {
   ensureArray,
   randomDate,
   shuffle,
   getRandomInt,
   asyncMiddleware,
+  getAdmin
   // prepareErrors
 };

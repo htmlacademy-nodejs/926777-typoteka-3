@@ -5,9 +5,14 @@ const api = require(`../api`).getAPI();
 const multer = require(`multer`);
 const path = require(`path`);
 const {nanoid} = require(`nanoid`);
-const {asyncMiddleware, ensureArray} = require(`../../utils`);
+const csrf = require(`csurf`);
+const {asyncMiddleware, ensureArray, getAdmin} = require(`../../utils`);
+const auth = require(`../middlewares/auth`);
+
+const csrfProtection = csrf();
 
 const UPLOAD_DIR = `../upload/img/`;
+
 const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
 const articlesRouter = new Router();
 
@@ -43,14 +48,23 @@ articlesRouter.get(`/category/:id`, asyncMiddleware(async (req, res) => {
   res.render(`articles-by-category`, {article, categories});
 }));
 
-articlesRouter.get(`/add`, asyncMiddleware(async (req, res) => {
+articlesRouter.get(`/add`, auth, csrfProtection, asyncMiddleware(async (req, res) => {
+  const {user} = req.session;
+  const admin = getAdmin(user);
   const {error} = req.query;
   const categories = await getAddArticleData();
-  res.render(`new-post`, {categories, error});
+
+  if (admin) {
+    res.render(`new-post`, {categories, error, user, admin, csrfToken: req.csrfToken()});
+  } else {
+    res.redirect(`/`);
+  }
 }));
 
-articlesRouter.post(`/add`, upload.single(`upload`), asyncMiddleware(async (req, res) => {
+articlesRouter.post(`/add`, auth, upload.single(`upload`), csrfProtection, asyncMiddleware(async (req, res) => {
   const {body, file} = req;
+  const {user} = req.session;
+  const admin = getAdmin(user);
   const articleData = {
     picture: file ? file.filename : ``,
     fullText: body.fullText,
@@ -58,23 +72,35 @@ articlesRouter.post(`/add`, upload.single(`upload`), asyncMiddleware(async (req,
     announce: body.announce,
     createdDate: body.createdDate,
     categories: ensureArray(body.category),
+    userId: user.id
   };
   try {
     await api.createArticle(articleData);
     res.redirect(`/my`);
   } catch (errors) {
-    res.redirect(`/articles/add?error=${encodeURIComponent(errors.response.data)}`);
+    const errorMessages = errors.response.data.split(`\n`);
+    const categories = await api.getCategories();
+    res.render(`new-post`, {categories, user, admin, errorMessages, csrfToken: req.csrfToken()});
   }
 }));
 
-articlesRouter.get(`/edit/:id`, asyncMiddleware(async (req, res) => {
+articlesRouter.get(`/edit/:id`, auth, csrfProtection, asyncMiddleware(async (req, res) => {
+  const {user} = req.session;
+  const admin = getAdmin(user);
   const {id} = req.params;
   const {error} = req.query;
   const [article, categories] = await getEditArticleData(id);
-  res.render(`new-post`, {id, article, categories, error});
+
+  if (admin) {
+    res.render(`edit-post`, {id, article, categories, error, user, admin, csrfToken: req.csrfToken()});
+  } else {
+    res.redirect(`/`);
+  }
 }));
 
-articlesRouter.post(`/edit/:id`, upload.single(`upload`), asyncMiddleware(async (req, res) => {
+articlesRouter.post(`/edit/:id`, auth, csrfProtection, upload.single(`upload`), asyncMiddleware(async (req, res) => {
+  const {user} = req.session;
+  const admin = getAdmin(user);
   const {body, file} = req;
   const {id} = req.params;
   const data = {
@@ -83,34 +109,44 @@ articlesRouter.post(`/edit/:id`, upload.single(`upload`), asyncMiddleware(async 
     createdDate: body.date,
     announce: body.announce,
     fullText: body[`full-text`],
-    categories: [...body.category] || []
+    categories: [...body.category] || [],
+    userId: user.id
   };
   try {
     await api.editArticle(id, data);
     res.redirect(`/my`);
   } catch (errors) {
-    res.redirect(`/articles/edit/${id}?error=${encodeURIComponent(errors.response.data)}`);
+    const errorMessages = errors.response.data.split(`\n`);
+    const [aricle, categories] = await Promise.all([
+      api.getArticle(id),
+      api.getCategories()
+    ]);
+    res.render(`edit-post`, {id, aricle, categories, user, admin, errorMessages, csrfToken: req.csrfToken()});
   }
 }));
 
-articlesRouter.get(`/:id`, asyncMiddleware(async (req, res) => {
+articlesRouter.get(`/:id`, csrfProtection, asyncMiddleware(async (req, res) => {
+  const {user} = req.session;
+  const admin = getAdmin(user);
   const {id} = req.params;
   const {error} = req.query;
   const article = await api.getArticle(id, {comments: true});
-  res.render(`post`, {article, id, error});
+  const categories = api.getCategories();
+  res.render(`post`, {article, id, error, user, admin, categories, csrfToken: req.csrfToken()});
 }));
 
-articlesRouter.post(`/:id/comments`, asyncMiddleware(async (req, res) => {
+articlesRouter.post(`/:id/comments`, auth, asyncMiddleware(async (req, res) => {
+  const {user} = req.session;
   const {id} = req.params;
-  const {body} = req;
-  const data = {
-    text: body.comments
-  };
+  const {comments} = req.body;
   try {
-    await api.createComment(id, data);
+    await api.createComment(id, {userId: user.id, text: comments});
     res.redirect(`/articles/${id}`);
   } catch (errors) {
-    res.redirect(`/articles/${id}?error=${encodeURIComponent(errors.response.data)}`);
+    const errorMessages = errors.response.data.split(`\n`);
+    const article = await api.getArticle(id, {comments: true});
+    const categories = await api.getCategories(true);
+    res.render(`post`, {article, id, user, categories, errorMessages, csrfToken: req.csrfToken()});
   }
 }));
 

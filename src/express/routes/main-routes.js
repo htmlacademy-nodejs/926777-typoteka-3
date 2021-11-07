@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const api = require(`../api`).getAPI();
-const {asyncMiddleware} = require(`../../utils`);
+const {asyncMiddleware, getAdmin} = require(`../../utils`);
 const upload = require(`../../service/middlewares/upload`);
 
 const mainRouter = new Router();
@@ -10,6 +10,8 @@ const mainRouter = new Router();
 const ARTICLES_PER_PAGE = 8;
 
 mainRouter.get(`/`, asyncMiddleware(async (req, res) => {
+  const {user} = req.session;
+  const admin = getAdmin(user);
   let {page = 1} = req.query;
   page = +page;
   const limit = ARTICLES_PER_PAGE;
@@ -22,16 +24,17 @@ mainRouter.get(`/`, asyncMiddleware(async (req, res) => {
     api.getCategories(true),
   ]);
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
-
-  res.render(`main`, {articles, categories, page, totalPages});
+  res.render(`main`, {articles, categories, page, totalPages, admin, user});
 }));
 
 mainRouter.get(`/register`, (req, res) => {
-  res.render(`sign-up`);
+  const {user} = req.session;
+  res.render(`sign-up`, {user});
 });
 
 mainRouter.post(`/register`, upload.single(`upload`), asyncMiddleware(async (req, res) => {
   const {body, file} = req;
+  const {user} = req.session;
   const userData = {
     avatar: file ? file.filename : ``,
     firstName: body.firstName,
@@ -45,11 +48,33 @@ mainRouter.post(`/register`, upload.single(`upload`), asyncMiddleware(async (req
     res.redirect(`/login`);
   } catch (errors) {
     const errorMessages = errors.response.data.split(`\n`);
-    res.render(`sign-up`, {errorMessages});
+    res.render(`sign-up`, {errorMessages, user});
   }
 }));
 
-mainRouter.get(`/login`, (req, res) => res.render(`login`));
+mainRouter.get(`/login`, (req, res) => {
+  const {user} = req.session;
+  res.render(`login`, {user});
+});
+
+mainRouter.post(`/login`, async (req, res) => {
+  try {
+    const user = await api.auth(req.body.email, req.body.password);
+    req.session.user = user;
+    req.session.save(() => {
+      res.redirect(`/`);
+    });
+  } catch (errors) {
+    const errorMessages = errors.response.data.split(`\n`);
+    const {user} = req.session;
+    res.render(`login`, {user, errorMessages});
+  }
+});
+
+mainRouter.get(`/logout`, (req, res) => {
+  delete req.session.user;
+  res.redirect(`/`);
+});
 
 mainRouter.get(`/search`, asyncMiddleware(async (req, res) => {
   try {
@@ -66,8 +91,14 @@ mainRouter.get(`/search`, asyncMiddleware(async (req, res) => {
 }));
 
 mainRouter.get(`/categories`, asyncMiddleware(async (req, res) => {
+  const {user} = req.session;
+  const admin = getAdmin(user);
   const categories = await api.getCategories(true);
-  res.render(`all-categories`, {categories});
+  if (admin) {
+    res.render(`all-categories`, {categories, user, admin});
+  } else {
+    res.redirect(`/`);
+  }
 }));
 
 module.exports = mainRouter;
