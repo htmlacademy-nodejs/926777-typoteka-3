@@ -71,10 +71,10 @@ mainRouter.post(`/login`, async (req, res) => {
   }
 });
 
-mainRouter.get(`/logout`, (req, res) => {
+mainRouter.get(`/logout`, asyncMiddleware((req, res) => {
   delete req.session.user;
   res.redirect(`/`);
-});
+}));
 
 mainRouter.get(`/search`, asyncMiddleware(async (req, res) => {
   try {
