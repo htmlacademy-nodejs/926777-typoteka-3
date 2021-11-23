@@ -3,21 +3,22 @@ extends layout.pug
 block content
   main
     section.search-page
-      .search-page__wrapper
-        h1 Поиск
-        .search.search-page__form
-          form(action='/search' method='get' autocomplete="off")
-            label
-              input(type='text' name='search' placeholder='Что ищем?')
-            button.search__button.button.button--transparent(type='submit') Найти
-          section
-            each article in results
-              if !article
-                .search__result
-              else 
-                .search__result
+      if results
+        if results.length > 0
+          each article in results
+            if article
+            div.search-page__wrapper
+              h1 Поиск
+              div.search.search-page__form
+                include search-form.pug
+                div.search__result
                   time.search__date(datetime=article.createdDate) #{article.createdDate}
                   a.search__link(href='#') #{article.title}
-               
-                  
-              
+        else if results.length <= 0
+            div.search-page__wrapper.search-page__wrapper--empty
+              h1 Поиск
+              div.search.search-page__form
+                include search-form.pug
+                div.search__result 
+                  p.search-page__empty Ничего не нашлось
+      

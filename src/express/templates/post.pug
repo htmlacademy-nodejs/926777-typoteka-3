@@ -24,7 +24,7 @@ block content
                     sup #{category.count}
                   button.themes__remove-btn(type='button') Удалить категорию
           .post__picture
-            img(src=`${article.picture}` alt=`${article.title}`)
+            img(src=`/img/${article.picture}` alt=`${article.title}`)
           .post__text
             h3 #{article.title}
             p
@@ -36,7 +36,7 @@ block content
             each comment in article.comments
               li.comments__comment
                 .comments__avatar.avatar
-                  img(src=src=`/img/${comment.users.avatar}` alt='аватар пользователя')
+                  img(src=`/img/${comment.users.avatar}` alt='аватар пользователя')
                 .comments__text
                   .comments__head
                     p #{comment.users.firstName} #{comment.users.lastName} •

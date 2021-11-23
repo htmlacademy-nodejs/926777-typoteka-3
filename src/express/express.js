@@ -13,7 +13,7 @@ const {HttpCode} = require(`../constants`);
 
 const DEFAULT_PORT = 8080;
 const PUBLIC_DIR = `public`;
-const UPLOAD_DIR = `upload`;
+const UPLOAD_DIR = `../service/upload`;
 
 const {SESSION_SECRET} = process.env;
 

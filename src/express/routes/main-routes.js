@@ -1,9 +1,12 @@
 'use strict';
 
 const {Router} = require(`express`);
+const csrf = require(`csurf`);
 const api = require(`../api`).getAPI();
 const {asyncMiddleware, getAdmin} = require(`../../utils`);
 const upload = require(`../../service/middlewares/upload`);
+
+const csrfProtection = csrf();
 
 const mainRouter = new Router();
 
@@ -24,7 +27,14 @@ mainRouter.get(`/`, asyncMiddleware(async (req, res) => {
     api.getCategories(true),
   ]);
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
-  res.render(`main`, {articles, categories, page, totalPages, admin, user});
+
+  const articlesWithComments = [];
+  articles.map((article) => {
+    if(article.comments.length > 0) {
+      articlesWithComments.push(article);
+  }});
+
+  res.render(`main`, {articles, categories, page, totalPages, admin, user, articlesWithComments});
 }));
 
 mainRouter.get(`/register`, (req, res) => {
@@ -76,16 +86,46 @@ mainRouter.get(`/logout`, asyncMiddleware((req, res) => {
   res.redirect(`/`);
 }));
 
-mainRouter.get(`/search`, asyncMiddleware(async (req, res) => {
+// mainRouter.get(`/search`, asyncMiddleware(async (req, res) => {
+//   try {
+//     const {search} = req.query;
+//     const results = await api.search(search);
+//     res.render(`search`, {
+//       results
+//     });
+//   } catch (error) {
+//     res.render(`search`, {
+//       results: []
+//     });
+//   }
+// }));
+
+mainRouter.get(`/search`, csrfProtection, asyncMiddleware(async (req, res) => {
+  const {user} = req.session;
+
   try {
     const {search} = req.query;
+
+    if (search === undefined) {
+      res.render(`search-first-view`, {
+        user,
+        csrfToken: req.csrfToken()
+      });
+      return;
+    }
+
     const results = await api.search(search);
+
     res.render(`search`, {
-      results
+      results,
+      user,
+      csrfToken: req.csrfToken()
     });
   } catch (error) {
     res.render(`search`, {
-      results: []
+      results: [],
+      user,
+      csrfToken: req.csrfToken()
     });
   }
 }));

@@ -8,6 +8,7 @@
     "jest": "jest",
     "eslint": "eslint --ext .js src/",
     "start": "npm run start-servers",
+    "start::debug": "cross-env LOG_LEVEL=info NODE_ENV=development node -r dotenv/config ./src/service/service.js",
     "start:dev": "nodemon ./src/service/service.js",
     "server": "nodemon ./src/service/service.js --server 3000",
     "start-front-server": "node -r dotenv/config ./src/express/express.js",

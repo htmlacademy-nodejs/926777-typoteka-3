@@ -9,7 +9,7 @@ header.header
           a.header__registration(href='/register') Регистрация
         li.header__list-item
           a.header__enter(href='/login') Вход с паролем
-    a.header__search.button.button--search(href='#' aria-label='поиск по сайту')
+    a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')
   if (!admin && user)
     nav.header__nav
       ul.header__nav-list
@@ -21,7 +21,7 @@ header.header
       img(src=`${user.avatar ? user.avatar : '/img/icons/smile.svg'}` alt='аватар пользователя')
     a.header__search.button.button--search(href='#' aria-label='поиск по сайту')
   if (admin)
-    button.button.button--colored.header__button-new Новая запись
+    a.button.button--colored.header__button-new(href='/articles/add') Новая запись
     div.header__dropdown
       a.button.button--burger.header__burger(href='#') Открыть меню
       ul.navigation.header__navigation

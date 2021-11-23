@@ -1,0 +1,10 @@
+if  articlesWithComments.length === 0
+  p.hot__empty Здесь пока ничего нет...
+if  articlesWithComments.length > 0
+  ul.hot__list
+    each article in articles
+      if article.comments.length >= 1
+        li.hot__list-item
+          a.hot__list-link(href='#') #{article.announce}
+            sup.hot__link-sup #{article.comments.length}
+          

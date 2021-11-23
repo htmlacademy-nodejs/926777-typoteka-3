@@ -43,7 +43,6 @@ block content
                 label
                   textarea(rows='5' name='announcement' placeholder='Анонс публикации')
                     | #{article.announce}
-                  +inputMessages(errorMessages, 'Анонс публикации')
               .form__field.form__field--publication-text
                 label
                   textarea(rows='10' name='full-text' placeholder='Полный текст публикации')
