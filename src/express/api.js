@@ -70,6 +70,11 @@ class API {
       data: {email, password}
     });
   }
+
+  getRecentComments() {
+    return this._load(`/articles/comments`);
+  }
+
 }
 
 const defaultAPI = new API(defaultUrl, TIMEOUT);

@@ -11,7 +11,7 @@ const auth = require(`../middlewares/auth`);
 
 const csrfProtection = csrf();
 
-const UPLOAD_DIR = `../upload/img/`;
+const UPLOAD_DIR = `../../service/upload/img/`;
 
 const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
 const articlesRouter = new Router();

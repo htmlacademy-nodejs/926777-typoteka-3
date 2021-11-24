@@ -59,6 +59,11 @@ body
       ul.form__errors
         li.form__error= message
 
+  mixin getPicture(picture)
+    if picture
+      div.preview__background
+        img.preview__background-image(src=`/img/${picture}` width='460' height='240' salt='Фотография небоскреба')
+
   include partials/header.pug
   block content
   include partials/footer.pug

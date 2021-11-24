@@ -3,7 +3,7 @@
 const {Router} = require(`express`);
 const csrf = require(`csurf`);
 const api = require(`../api`).getAPI();
-const {asyncMiddleware, getAdmin} = require(`../../utils`);
+const {asyncMiddleware, getAdmin, getArticlesWithComments} = require(`../../utils`);
 const upload = require(`../../service/middlewares/upload`);
 
 const csrfProtection = csrf();
@@ -22,19 +22,16 @@ mainRouter.get(`/`, asyncMiddleware(async (req, res) => {
   const [
     {count, articles},
     categories,
+    lastComments
   ] = await Promise.all([
     api.getArticles({limit, offset, comments: true}),
     api.getCategories(true),
+    api.getRecentComments()
   ]);
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
+  let articlesWithComments = getArticlesWithComments(articles);
 
-  const articlesWithComments = [];
-  articles.map((article) => {
-    if(article.comments.length > 0) {
-      articlesWithComments.push(article);
-  }});
-
-  res.render(`main`, {articles, categories, page, totalPages, admin, user, articlesWithComments});
+  res.render(`main`, {articles, categories, page, totalPages, admin, user, articlesWithComments, lastComments});
 }));
 
 mainRouter.get(`/register`, (req, res) => {
@@ -85,20 +82,6 @@ mainRouter.get(`/logout`, asyncMiddleware((req, res) => {
   delete req.session.user;
   res.redirect(`/`);
 }));
-
-// mainRouter.get(`/search`, asyncMiddleware(async (req, res) => {
-//   try {
-//     const {search} = req.query;
-//     const results = await api.search(search);
-//     res.render(`search`, {
-//       results
-//     });
-//   } catch (error) {
-//     res.render(`search`, {
-//       results: []
-//     });
-//   }
-// }));
 
 mainRouter.get(`/search`, csrfProtection, asyncMiddleware(async (req, res) => {
   const {user} = req.session;

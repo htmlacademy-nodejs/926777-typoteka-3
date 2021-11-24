@@ -22,6 +22,15 @@ module.exports = (app, articleService, commentService) => {
     res.status(HttpCode.OK).json(articles);
   });
 
+  route.get(`/comments`, async (req, res) => {
+    try {
+      const comments = await commentService.findRecent();
+      return res.status(HttpCode.OK).json(comments);
+    } catch (e) {
+      return res.status(HttpCode.INTERNAL_SERVER_ERROR);
+    }
+  });
+
   route.get(`/:articleId`, routeParamsValidator, async (req, res) => {
     const {comments} = req.query;
     const {articleId} = req.params;

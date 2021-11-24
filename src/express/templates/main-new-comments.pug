@@ -2,11 +2,10 @@ if  articlesWithComments.length === 0
   p.hot__empty Здесь пока ничего нет...
 if  articlesWithComments.length > 0
   ul.last__list
-    each article in articles
-      each comment in article.comments
-        li.last__list-item
-          img.last__list-image(src='/img/avatar-small-1.png' width='20' height='20' alt='Аватар пользователя')
-          b.last__list-name Анна Артамонова
-          a.last__list-link(href='#')
-            | #{comment.text}
+    each comment in lastComments
+      li.last__list-item
+        img.last__list-image(src=`${comment.users.avatar ? ('/img/' + comment.users.avatar) : '/img/icons/smile.svg'}` width='20' height='20' )
+        b.last__list-name #{comment.users.firstName} #{comment.users.lastName}
+        a.last__list-link(href=`/articles/${comment.articleId}`)
+          | #{comment.text.length > 99 ? comment.text.substring(0, 99) + "..." : comment.text}
       

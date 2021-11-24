@@ -42,10 +42,6 @@ const asyncMiddleware = (fn) => {
   };
 };
 
-// const prepareErrors = (errors) => {
-//   return errors.response.data.split(`\n`);
-// };
-
 const getAdmin = (user) => {
   let admin = false;
   if (user && user.id === 4) {
@@ -54,12 +50,22 @@ const getAdmin = (user) => {
   return admin;
 };
 
+const getArticlesWithComments = (articles) => {
+  let articlesWithComments = [];
+  articles.map((article) => {
+    if (article.comments.length > 0) {
+      articlesWithComments.push(article);
+    }
+  });
+  return articlesWithComments;
+};
+
 module.exports = {
   ensureArray,
   randomDate,
   shuffle,
   getRandomInt,
   asyncMiddleware,
-  getAdmin
-  // prepareErrors
+  getAdmin,
+  getArticlesWithComments
 };

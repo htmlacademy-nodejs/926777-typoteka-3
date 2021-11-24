@@ -19,18 +19,16 @@ header.header
           a.header__exit(href='/logout') Выйти
     a.header__avatar.avatar
       img(src=`${user.avatar ? user.avatar : '/img/icons/smile.svg'}` alt='аватар пользователя')
-    a.header__search.button.button--search(href='#' aria-label='поиск по сайту')
+    a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')
   if (admin)
     a.button.button--colored.header__button-new(href='/articles/add') Новая запись
     div.header__dropdown
       a.button.button--burger.header__burger(href='#') Открыть меню
       ul.navigation.header__navigation
         li.navigation__item
-          a(href='/') Пункт меню
+          a(href='/categories') Категории
         li.navigation__item
-          a(href='/') Пункт меню
+          a(href='/my') Публикации
         li.navigation__item
-          a(href='/') Пункт меню
-        li.navigation__item
-          a(href='/') Пункт меню
-    a.header__search.button.button--search(href='#' aria-label='поиск по сайту')
+          a(href='/my/comments') Комментарии
+    a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')
