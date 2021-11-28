@@ -114,7 +114,7 @@ articlesRouter.get(`/edit/:id`, auth, csrfProtection, asyncMiddleware(async (req
   }
 }));
 
-articlesRouter.post(`/edit/:id`, auth, csrfProtection, upload.single(`upload`), asyncMiddleware(async (req, res) => {
+articlesRouter.post(`/edit/:id`, auth, upload.single(`upload`), asyncMiddleware(async (req, res) => {
   const {user} = req.session;
   const admin = getAdmin(user);
   const {body, file} = req;
@@ -137,7 +137,7 @@ articlesRouter.post(`/edit/:id`, auth, csrfProtection, upload.single(`upload`), 
       api.getArticle(id),
       api.getCategories()
     ]);
-    res.render(`edit-post`, {id, aricle, categories, user, admin, errorMessages, csrfToken: req.csrfToken()});
+    res.render(`edit-post`, {id, aricle, categories, user, admin, errorMessages});
   }
 }));
 
