@@ -44,7 +44,7 @@ const asyncMiddleware = (fn) => {
 
 const getAdmin = (user) => {
   let admin = false;
-  if (user && user.id === 4) {
+  if (user && user.id === 1) {
     admin = true;
   }
   return admin;
