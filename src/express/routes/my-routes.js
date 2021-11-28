@@ -22,8 +22,10 @@ myRouter.get(`/comments`, asyncMiddleware(async (req, res) => {
   const {user} = req.session;
   const admin = getAdmin(user);
   const articles = await api.getArticles({comments: true});
+  let comments = [];
+  articles.map((article) => article.comments.map((comment) => comments.push(comment)));
   if (admin) {
-    res.render(`comments`, {articles: articles.slice(0, 3), user, admin});
+    res.render(`comments`, {articles, comments, user, admin});
   } else {
     res.redirect(`/`);
   }

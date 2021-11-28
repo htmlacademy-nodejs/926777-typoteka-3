@@ -10,14 +10,15 @@ block content
     section.main-page__publication.publication
       h1.publication__title Комментарии
       ul.publication__list
-        each article in articles
-          each comment in article.comments
-            li.publication__list-item
-              .publication__header
-                img.publication__list-image(src=`/img/${comment.users.avatar}` width='20' height='20' alt='Аватар пользователя')
-                b.publication__list-name #{comment.users.firstName} #{comment.users.lastName}
-                time.publication__item-time(datetime=`${formatDate(comment.createdAt)}`) #{formatDate(comment.createdAt)}
-              a.publication__item-text(href='#') #{comment.text}
-              p.publication__text-strong #{comment.text}
-              button.publication__button.button.button--close-item(type='button')
+        each comment in comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          li.publication__list-item
+            .publication__header
+              img.publication__list-image(src=`${comment.users.avatar ? ('/img/' + comment.users.avatar) : '/img/icons/smile.svg'}` width='20' height='20' alt='Аватар пользователя')
+              b.publication__list-name #{comment.users.firstName} #{comment.users.lastName}
+              time.publication__item-time(datetime=`${formatDate(comment.createdAt)}`) #{formatDate(comment.createdAt)}
+            a.publication__item-text(href='#') #{comment.text}
+            p.publication__text-strong #{articles.map(article => (article.id === comment.articleId) ? article.title : "")}
+            form(action=(`/articles/${comment.articleId}/comment/${comment.id}`) method='POST' enctype='application/x-www-form-urlencoded')
+              input(type="hidden" name="_csrf" value=csrfToken)
+              button.publication__button.button.button--close-item(type='submit')
                 span.visually-hidden Закрыть строку списка 

@@ -1,13 +1,25 @@
 extends layout.pug
 
 block content
+  -
+    const formatDate = (dateString) => {
+      var date = new Date(dateString);
+      var yyyy = date.getFullYear().toString();
+      var mm = (date.getMonth()+1).toString();
+      var dd  = date.getDate().toString();
+      var mmChars = mm.split('');
+      var ddChars = dd.split('');
+      return (ddChars[1]?dd:"0"+ddChars[0]) + '-' + (mmChars[1]?mm:"0"+mmChars[0]) + '-' + yyyy;
+    }
   main.main-page.main-page--padding
     section.main-page__notes.notes
       h1.notes__title Мои записи
       ul.notes__list
-        each article in articles
+        each article in articles.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
           li.notes__list-item
-            time.notes__item-time(datetime=`${article.createdDate}`) #{article.createdDate} 20:33
-            a.notes__item-text(href='#') #{article.title}
-            button.notes__button.button.button--close-item(type='button')
-              span.visually-hidden Закрыть строку списка
+            time.notes__item-time(datetime=`${formatDate(article.createdDate)}`) #{formatDate(article.createdDate)}
+            a.notes__item-text(href=`articles/edit/${article.id}`) #{article.title}
+            form(action=(`/articles/${article.id}`) method='POST' enctype='application/x-www-form-urlencoded')
+              input(type="hidden" name="_csrf" value=csrfToken)
+              button.notes__button.button.button--close-item(type='submit')
+                span.visually-hidden Закрыть строку списка

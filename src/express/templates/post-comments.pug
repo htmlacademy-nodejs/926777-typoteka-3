@@ -1,0 +1,16 @@
+.post__wrapper.post__wrapper--comments
+  section.post__comments.comments   
+    if article.comments.length <= 0
+        h2.comments__title.title.title--middle Комментарии отсутствуют
+    if article.comments.length > 0
+        h2.comments__title.title.title--middle Комментарии
+        ul.comments__list
+          each comment in article.comments.reverse()
+            li.comments__comment
+            .comments__avatar.avatar
+                img(src=`${comment.users.avatar ? ('/img/' + comment.users.avatar) : '/img/icons/smile.svg'}` alt='аватар пользователя')
+            .comments__text
+                .comments__head
+                p #{comment.users.firstName} #{comment.users.lastName} •
+                time.comments__date(datetime=`${formatDate(comment.createdAt)}`) #{formatDate(comment.createdAt)}
+                p.comments__message #{comment.text}

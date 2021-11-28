@@ -31,8 +31,6 @@ const mySessionStore = new SequelizeStore({
 
 sequelize.sync({force: false});
 
-app.use(express.urlencoded({extended: false}));
-
 app.use(session({
   secret: SESSION_SECRET,
   store: mySessionStore,

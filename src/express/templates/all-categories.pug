@@ -5,17 +5,24 @@ block content
     section.main-page__category.category
       h1.category__title Категории
       .category__add-form
-        form(action='#' method='POST')
-          input#add-form-add-category(type='text' name='add-category' placeholder='Новая категория')
+        form(action='/categories/add' method='POST' enctype='application/x-www-form-urlencoded')
+          input(type="hidden" name="_csrf" value=`${csrfToken}`)
+          input#add-form-add-category(type='text' name='category' placeholder='Новая категория')
           label(for='add-form-add-category')
             span.visually-hidden Добавить категорию
           button.category__button.button.button--category(type='submit') Добавить
+      +errorMessage(errorMessages)
       ul.category__list
         each category in categories
           li.category__list-item
-            form(action='#' method='POST')
-              input#modify-form-category-1(type='text' name=`${category.name}` value=`${category.name}`)
-              label(for='modify-form-category-1')
+            form(action=`/categories/${category.id}/update` method='POST' enctype='application/x-www-form-urlencoded')
+              input(type="hidden" name="_csrf" value=`${csrfToken}`)
+              input(id=`modify-form-category-${category.id}`)(type='text' name='category' value=`${category.name}`)
+              label(for=`modify-form-category-${category.id}`)
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type='submit') Сохранить
-              button.category__button.button.button--category(type='button') Удалить
+              a(href=`/categories/${category.id}/delete`)
+                button.category__button.button.button--category(type='button') Удалить
+      +errorMessage(deleteErrorMessages)
+      +errorMessage(updateErrorMessages)
+      

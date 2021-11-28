@@ -75,6 +75,32 @@ class API {
     return this._load(`/articles/comments`);
   }
 
+  createCategory(data) {
+    return this._load(`/categories/add`, {
+      method: HttpMethod.POST,
+      data,
+    });
+  }
+
+  updateCategory(id, data) {
+    return this._load(`/categories/${id}/update`, {
+      method: HttpMethod.PUT,
+      data,
+    });
+  }
+
+  deleteCategory(id) {
+    return this._load(`/categories/${id}/delete`, {
+      method: HttpMethod.DELETE,
+    });
+  }
+
+  deleteComment(id, commentId) {
+    return this._load(`/articles/${id}/comments/${commentId}`, {
+      method: HttpMethod.DELETE,
+    });
+  }
+
 }
 
 const defaultAPI = new API(defaultUrl, TIMEOUT);

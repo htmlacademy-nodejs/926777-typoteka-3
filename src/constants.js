@@ -36,6 +36,8 @@ const Env = {
   PRODUCTION: `production`
 };
 
+const ARTICLES_PER_PAGE = 8;
+
 module.exports = {
   DEFAULT_COMMAND,
   USER_ARGV_INDEX,
@@ -44,6 +46,8 @@ module.exports = {
   HttpCode,
   API_PREFIX,
   Env,
-  HttpMethod
+  HttpMethod,
+  ARTICLES_PER_PAGE
 };
+
 

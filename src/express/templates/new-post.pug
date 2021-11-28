@@ -1,6 +1,15 @@
 extends layout.pug
 
 block content
+  -
+    const formatDate = (date) => {
+      var yyyy = date.getFullYear().toString();
+      var mm = (date.getMonth()+1).toString();
+      var dd  = date.getDate().toString();
+      var mmChars = mm.split('');
+      var ddChars = dd.split('');
+      return yyyy + '-' + (mmChars[1]?mm:"0"+mmChars[0]) + '-' + (ddChars[1]?dd:"0"+ddChars[0]);
+    }
   main
     section
       .popup.popup--new-publication.popup--anti
@@ -14,7 +23,7 @@ block content
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for='new-publication-date' aria-label='Календарь')
-                    input#new-publication-date(type='text' name='createdDate' placeholder='2019-03-21')
+                    input#new-publication-date(type='text' name='createdDate' placeholder=`${formatDate(new Date())}` value=`${formatDate(new Date())}`)
               button.new-publication__button.button.button--colored(type='submit') Опубликовать
             a.popup__button.button.button--popup-close(aria-label='Закрыть окно')
               | Закрыть
@@ -23,7 +32,7 @@ block content
               .form__wrapper.form__wrapper--intro
                 .form__field
                   label
-                    input(type='text' name='title' placeholder='Заголовок' required='')
+                    input(type='text' name='title' placeholder='Заголовок' minlength=30 maxlength=250 required='')
                 .form__field.form__field--post-image
                   label
                     input#image-name-field(type='text' name='picture' placeholder='Фотография' readonly='')
@@ -32,15 +41,16 @@ block content
                       input.visually-hidden(type='file' name='upload')
                       | Обзор
                 .new-publication__category-wrapper
-                  .new-publication__checkbox.new-publication__checkbox--auto
-                    select#category-field.new-publication__form-link.button.button--transparent(name='category' data-label='Добавить категорию')
-                      each category in categories
-                        option(value=category.id) #{category.name}
+                  each category in categories
+                    .new-publication__checkbox.new-publication__checkbox--auto
+                      input(type="checkbox" name="category" id=`checkbox-${category.id}` value=`${category.id}`)
+                      label(for=`checkbox-${category.id}`) #{category.name}
+                  a.new-publication__form-link.button.button--transparent(href='/categories') Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows='5' name='announce' placeholder='Анонс публикации')
+                    textarea(rows='5' name='announce' placeholder='Анонс публикации' minlength=30 maxlength=250 required='')
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows='10' name='fullText' placeholder='Полный текст публикации')
+                    textarea(rows='10' name='fullText' placeholder='Полный текст публикации' minlength=30 maxlength=1000)
               +errorMessage(errorMessages)

@@ -13,35 +13,22 @@ block content
         h2.visually-hidden Основное содержание
         .post__wrapper
           .post__head
-            a.post__backwards.button.button--backwards(href='#') Назад
-            time.post__date(datetime=`${article.createDate}`) #{article.createDate}
+            a.post__backwards.button.button--backwards(href='/') Назад
+            time.post__date(datetime=`${formatDate(article.createdDate)}`) #{formatDate(article.createdDate)}
             h2.post__title.title.title--main #{article.title}
             ul.post__themes.themes
-              each category in article.categories
+              each category in categories
                 li.themes__item
-                  a.themes__item-link(href='#')
+                  a.themes__item-link(href=`/articles/category/${category.id}`)
                     | #{category.name}
                     sup #{category.count}
                   button.themes__remove-btn(type='button') Удалить категорию
-          .post__picture
-            img(src=`/img/${article.picture}` alt=`${article.title}`)
+          +getPostPicture(article.picture, article.title)
           .post__text
             h3 #{article.title}
-            p
-              | #{article.fullText}
-      .post__wrapper.post__wrapper--comments
-        section.post__comments.comments
-          h2.comments__title.title.title--middle Комментарии
-          ul.comments__list
-            each comment in article.comments
-              li.comments__comment
-                .comments__avatar.avatar
-                  img(src=`/img/${comment.users.avatar}` alt='аватар пользователя')
-                .comments__text
-                  .comments__head
-                    p #{comment.users.firstName} #{comment.users.lastName} •
-                    time.comments__date(datetime=`${formatDate(comment.createdAt)}`) #{formatDate(comment.createdAt)}
-                  p.comments__message #{comment.text}
+            p #{article.announce}
+            p #{article.fullText}
+      include post-comments.pug       
           if user
             .comments__footer.comments__footer--user
               form(action=`/articles/${id}/comments` enctype='application/x-www-form-urlencoded' method='POST')
@@ -51,4 +38,11 @@ block content
                   textarea(rows='1' name='comments' placeholder='Присоединиться к обсуждению' required='')
                 button.comments__button.button.button--colored(type='submit') Опубликовать
                 +errorMessage(error)
+          if !user
+            div.comments__footer.comments__footer--visitor
+              a(href="/login").comments__button.button.button--colored Войти
+              div.comments__registration
+                p.text.text--signature
+                  b.title.title--small Регистрация
+                | Чтобы присоединиться к переписке нужно зарегистрироваться
             

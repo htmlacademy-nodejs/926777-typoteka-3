@@ -97,4 +97,19 @@ module.exports = (app, articleService, commentService) => {
     return res.status(HttpCode.CREATED)
       .json(comments);
   });
+
+  route.delete(`/:articleId/comments/:commentId`, articleExist(articleService), async (req, res) => {
+    try {
+      const {commentId} = req.params;
+      const deleted = await commentService.drop(commentId);
+      if (!deleted) {
+        return res.status(HttpCode.NOT_FOUND)
+          .send(`Not found`);
+      }
+      return res.status(HttpCode.OK)
+        .json(deleted);
+    } catch (e) {
+      return res.status(HttpCode.INTERNAL_SERVER_ERROR);
+    }
+  });
 };

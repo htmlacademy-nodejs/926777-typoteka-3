@@ -1,19 +1,24 @@
 extends layout.pug
 
 block content
+  -
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleString();
+    }
   main
     section.search-page
       if results
         if results.length > 0
-          each article in results
-            if article
-            div.search-page__wrapper
-              h1 Поиск
-              div.search.search-page__form
-                include search-form.pug
-                div.search__result
-                  time.search__date(datetime=article.createdDate) #{article.createdDate}
-                  a.search__link(href='#') #{article.title}
+          div.search-page__wrapper
+            h1 Поиск
+            div.search.search-page__form
+              include search-form.pug
+              div.search__result
+                each article in results.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate))
+                  if article
+                    time.search__date(datetime=`${formatDate(article.createdDate)}`) #{formatDate(article.createdDate)}
+                    a.search__link(href=`/articles/${article.id}`) #{article.title}
         else if results.length <= 0
             div.search-page__wrapper.search-page__wrapper--empty
               h1 Поиск
