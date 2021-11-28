@@ -48,13 +48,6 @@ class CommentService {
     });
   }
 
-  async drop(id) {
-    const deletedRows = await this._Comment.destroy({
-      where: {id}
-    });
-    return !!deletedRows;
-  }
-
 }
 
 module.exports = CommentService;

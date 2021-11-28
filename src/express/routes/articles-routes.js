@@ -166,7 +166,7 @@ articlesRouter.post(`/:id/comments`, auth, csrfProtection, asyncMiddleware(async
   }
 }));
 
-articlesRouter.post(`/:id/comment/:commentId`, auth, csrfProtection, asyncMiddleware(async (req, res) => {
+articlesRouter.post(`/:id/comments/:commentId`, auth, asyncMiddleware(async (req, res) => {
   const {id, commentId} = req.params;
   try {
     await api.deleteComment(id, commentId);
