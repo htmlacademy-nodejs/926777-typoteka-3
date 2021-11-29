@@ -24,6 +24,10 @@ class API {
     return this._load(`/articles`, {params: {offset, limit, comments}});
   }
 
+  getAllArticles({comments}) {
+    return this._load(`/articles`, {params: {comments}});
+  }
+
   getArticle(id, {comments}) {
     return this._load(`/articles/${id}`, {params: {comments}});
   }

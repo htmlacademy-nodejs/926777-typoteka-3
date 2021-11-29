@@ -2,7 +2,7 @@ if  articlesWithComments.length === 0
   p.hot__empty Здесь пока ничего нет...
 if  articlesWithComments.length > 0
   ul.hot__list
-    each article in articles.sort((a, b) => b.comments.length - a.comments.length).slice(0, 4)
+    each article in allArticles.sort((a, b) => b.comments.length - a.comments.length).slice(0, 4)
       if article.comments.length >= 1
         li.hot__list-item
           a.hot__list-link(href=`/articles/${article.id}`) #{article.announce.length > 99 ? article.announce.substring(0, 99) + "..." : article.announce}

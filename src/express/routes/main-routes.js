@@ -20,17 +20,19 @@ mainRouter.get(`/`, asyncMiddleware(async (req, res) => {
   const offset = (page - 1) * ARTICLES_PER_PAGE;
   const [
     {count, articles},
+    allArticles,
     categories,
     lastComments
   ] = await Promise.all([
     api.getArticles({limit, offset, comments: true}),
+    api.getAllArticles({comments: true}),
     api.getCategories(true),
     api.getRecentComments()
   ]);
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
-  let articlesWithComments = getArticlesWithComments(articles);
+  let articlesWithComments = getArticlesWithComments(allArticles);
 
-  res.render(`main`, {articles, categories, page, totalPages, admin, user, articlesWithComments, lastComments});
+  res.render(`main`, {articles, categories, page, totalPages, admin, user, articlesWithComments, lastComments, allArticles});
 }));
 
 mainRouter.get(`/register`, (req, res) => {

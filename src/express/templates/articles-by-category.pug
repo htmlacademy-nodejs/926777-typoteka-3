@@ -19,7 +19,7 @@ block content
     section.articles-category__list.preview
       h2.visually-hidden Список превью статей
       ul.preview__list
-        each article in articlesInCategory
+        each article in articlesByPage
           li.preview__item
             ul.preview__breadcrumbs
               each articleCategory in article.categories
@@ -34,4 +34,4 @@ block content
               | Комментарии
               span.preview__cloud
               b.preview__comment-count #{article.comments.length}
-  +pagination(page, totalPages, 2, `?`)
+    +pagination(page, totalPages, 2, `${id}?`)

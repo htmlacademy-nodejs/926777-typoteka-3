@@ -46,22 +46,23 @@ articlesRouter.get(`/category/:id`, csrfProtection, asyncMiddleware(async (req, 
   page = +page;
   const limit = ARTICLES_PER_PAGE;
   const offset = (page - 1) * ARTICLES_PER_PAGE;
-  const [{count, articles}, categories] = await Promise.all([
-    api.getArticles({limit, offset, comments: true}),
+  const [allArticles, categories] = await Promise.all([
+    api.getAllArticles({comments: true}),
     api.getCategories(true),
   ]);
 
-  const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
   const category = categories.find((item) => {
     return item.id === +id;
   });
-  const articlesInCategory = articles.filter((article) => {
+  const articlesInCategory = allArticles.filter((article) => {
     return article.categories.some((item) => {
       return item.id === +id;
     });
   });
+  const totalPages = Math.ceil(articlesInCategory.length / ARTICLES_PER_PAGE);
+  const articlesByPage = articlesInCategory.slice(offset, offset + limit);
 
-  res.render(`articles-by-category`, {categories, page, totalPages, category, articlesInCategory, csrfToken: req.csrfToken()});
+  res.render(`articles-by-category`, {id, categories, page, totalPages, category, articlesByPage, csrfToken: req.csrfToken()});
 }));
 
 articlesRouter.get(`/add`, auth, csrfProtection, asyncMiddleware(async (req, res) => {
