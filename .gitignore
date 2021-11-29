@@ -17,8 +17,8 @@ build/
 mocks.json
 
 # Директория с загруженными изображениями
-src/express/upload/img/*.*
-!src/express/upload/img/.gitkeep
+src/service/upload/img/*.*
+!src/service/upload/img/.gitkeep
 
 # Файл с переменными окружения
 .env
