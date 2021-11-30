@@ -3,7 +3,7 @@ extends layout.pug
 block content
   -
     const formatDate = (dateString) => {
-      var date = new Date(dateString);
+      let date = new Date(dateString);
       date = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`;
       return date;
     }

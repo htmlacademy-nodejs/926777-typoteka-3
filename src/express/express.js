@@ -4,11 +4,11 @@ const express = require(`express`);
 const path = require(`path`);
 const chalk = require(`chalk`);
 const session = require(`express-session`);
+const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
 const articlesRoutes = require(`./routes/articles-routes`);
 const myRoutes = require(`./routes/my-routes`);
 const mainRoutes = require(`./routes/main-routes`);
 const sequelize = require(`../service/lib/sequelize`);
-const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
 const {HttpCode} = require(`../constants`);
 
 const DEFAULT_PORT = 8080;

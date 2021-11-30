@@ -291,7 +291,6 @@ test(`API refuses to delete non-existent article`, async () => {
     .expect(HttpCode.NOT_FOUND);
 });
 
-// тесты для комментариев
 describe(`API returns a list of comments to given article`, () => {
   let response;
 

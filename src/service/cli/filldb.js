@@ -7,8 +7,6 @@ const {getLogger} = require(`../lib/logger`);
 const passwordUtils = require(`../lib/password`);
 
 const sequelize = require(`../lib/sequelize`);
-// const defineModels = require(`../models`);
-// const Aliase = require(`../models/aliase`);
 
 const {
   getRandomInt,
@@ -89,9 +87,6 @@ module.exports = {
       process.exit(1);
     }
     logger.info(`Connection to database established`);
-
-    // const {Category, Article} = defineModels(sequelize);
-    // await sequelize.sync({force: true});
 
     const sentences = await readContent(FILE_SENTENCES_PATH);
     const titles = await readContent(FILE_TITLES_PATH);

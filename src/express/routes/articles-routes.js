@@ -1,11 +1,11 @@
 'use strict';
 
 const {Router} = require(`express`);
-const api = require(`../api`).getAPI();
 const multer = require(`multer`);
 const path = require(`path`);
 const {nanoid} = require(`nanoid`);
 const csrf = require(`csurf`);
+const api = require(`../api`).getAPI();
 const {asyncMiddleware, ensureArray, getAdmin} = require(`../../utils`);
 const {ARTICLES_PER_PAGE} = require(`../../constants`);
 const auth = require(`../middlewares/auth`);
