@@ -61,7 +61,7 @@ module.exports = (app, articleService, commentService) => {
       .json(updateArticle);
   });
 
-  route.delete(`/:articleId`, routeParamsValidator, async (req, res) => {
+  route.delete(`/:articleId`, async (req, res) => {
     const {articleId} = req.params;
     const article = await articleService.drop(articleId);
     if (!article) {
@@ -79,16 +79,19 @@ module.exports = (app, articleService, commentService) => {
       .json(comments);
   });
 
-  route.delete(`/:articleId/comments/:commentId`, [routeParamsValidator, articleExist(articleService)], async (req, res) => {
-    const {article} = res.locals;
-    const {commentId} = req.params;
-    const deletedComment = await commentService.drop(article, commentId);
-    if (!deletedComment) {
-      return res.status(HttpCode.NOT_FOUND)
+  route.delete(`/:articleId/comments/:commentId`, articleExist(articleService), async (req, res) => {
+    try {
+      const {commentId} = req.params;
+      const deleted = await commentService.drop(commentId);
+      if (!deleted) {
+        return res.status(HttpCode.NOT_FOUND)
         .json({error: `Not found`});
+      }
+      return res.status(HttpCode.OK)
+        .json(deleted);
+    } catch (e) {
+      return res.status(HttpCode.INTERNAL_SERVER_ERROR);
     }
-    return res.status(HttpCode.OK)
-      .json(deletedComment);
   });
 
   route.post(`/:articleId/comments`, [routeParamsValidator, articleExist(articleService), commentValidator], async (req, res) => {

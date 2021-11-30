@@ -44,28 +44,9 @@ const schema = Joi.object({
   })
 });
 
-// const articleKeys = [
-//   `title`,
-//   `announce`,
-//   `fullText`,
-//   `createdDate`,
-//   `category`,
-// ];
-
 module.exports = (req, res, next) => {
   const newArticle = req.body;
-  // const keys = Object.keys(newArticle);
-  // const keysExists = articleKeys.every((key) => keys.includes(key));
   const {error} = schema.validate(newArticle, {abortEarly: false});
-
-  // console.info(`keysExists`, keysExists);
-  // console.info(`newArticle`, newArticle);
-  // console.info(`keys`, keys);
-
-  // if (!keysExists) {
-  //   return res.status(HttpCode.BAD_REQUEST)
-  //     .send(`Bad request`);
-  // }
 
   if (error) {
     return res.status(HttpCode.BAD_REQUEST)

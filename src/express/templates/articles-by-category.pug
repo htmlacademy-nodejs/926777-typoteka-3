@@ -3,8 +3,13 @@ extends layout.pug
 block content
   -
     const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return date.toLocaleString();
+      let date = new Date(dateString);
+      const yyyy = date.getFullYear().toString();
+      let mm = (date.getMonth()+1).toString();
+      let dd  = date.getDate().toString();
+      const mmChars = mm.split('');
+      const ddChars = dd.split('');
+      return (ddChars[1]?dd:"0"+ddChars[0]) + '.' + (mmChars[1]?mm:"0"+mmChars[0]) + '.' + yyyy;
     }
   main.articles-category
     h1 #{category.name}

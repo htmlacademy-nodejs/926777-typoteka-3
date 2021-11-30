@@ -7,9 +7,7 @@ module.exports = new Sequelize(
     DB_NAME, DB_USER, DB_PASSWORD, {
       host: DB_HOST,
       port: DB_PORT,
-      // указываем, с какой СУБД предстоит работать
       dialect: `postgres`,
-      // настройки пула соединений
       pool: {
         max: 5,
         min: 0,
