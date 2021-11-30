@@ -358,9 +358,9 @@ describe(`API correctly deletes a comment`, () => {
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-  test(`Comments count is 1 now`, () => request(app)
+  test(`Comments count is 0 now`, () => request(app)
     .get(`/articles/1/comments`)
-    .expect((res) => expect(res.body.length).toBe(1))
+    .expect((res) => expect(res.body.length).toBe(0))
   );
 });
 

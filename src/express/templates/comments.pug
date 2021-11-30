@@ -3,8 +3,9 @@ extends layout.pug
 block content
   -
     const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return date.toLocaleString();
+      var date = new Date(dateString);
+      date = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`;
+      return date;
     }
   main.main-page.main-page--padding
     section.main-page__publication.publication
@@ -17,7 +18,7 @@ block content
               b.publication__list-name #{comment.users.firstName} #{comment.users.lastName}
               time.publication__item-time(datetime=`${formatDate(comment.createdAt)}`) #{formatDate(comment.createdAt)}
             a.publication__item-text(href='#') #{comment.text}
-            p.publication__text-strong #{articles.map(article => (article.id === comment.articleId) ? article.title : "")}
+            include comment-title.pug
             form(action=(`/articles/${comment.articleId}/comments/${comment.id}`) method='POST' enctype='application/x-www-form-urlencoded')
               button.publication__button.button.button--close-item(type='submit')
                 span.visually-hidden Закрыть строку списка 

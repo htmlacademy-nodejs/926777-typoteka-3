@@ -105,6 +105,12 @@ class API {
     });
   }
 
+  deleteArticle(id) {
+    return this._load(`/articles/${id}`, {
+      method: HttpMethod.DELETE,
+    });
+  }
+
 }
 
 const defaultAPI = new API(defaultUrl, TIMEOUT);

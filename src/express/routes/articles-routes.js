@@ -152,6 +152,16 @@ articlesRouter.get(`/:id`, csrfProtection, asyncMiddleware(async (req, res) => {
   res.render(`post`, {article, id, error, user, admin, categories, csrfToken: req.csrfToken()});
 }));
 
+articlesRouter.post(`/:id`, asyncMiddleware(async (req, res) => {
+  const {id} = req.params;
+  try {
+    await api.deleteArticle(id);
+    res.redirect(`/my`);
+  } catch (error) {
+    res.status(400).render(`errors/404`);
+  }
+}));
+
 articlesRouter.post(`/:id/comments`, auth, csrfProtection, asyncMiddleware(async (req, res) => {
   const {user} = req.session;
   const {id} = req.params;
@@ -167,7 +177,7 @@ articlesRouter.post(`/:id/comments`, auth, csrfProtection, asyncMiddleware(async
   }
 }));
 
-articlesRouter.post(`/:id/comments/:commentId`, auth, asyncMiddleware(async (req, res) => {
+articlesRouter.post(`/:id/comments/:commentId`, asyncMiddleware(async (req, res) => {
   const {id, commentId} = req.params;
   try {
     await api.deleteComment(id, commentId);

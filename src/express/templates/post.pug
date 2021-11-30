@@ -3,8 +3,19 @@ extends layout.pug
 block content
   -
     const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      return date.toLocaleString();
+      var date = new Date(dateString);
+      var yyyy = date.getFullYear().toString();
+      var mm = (date.getMonth()+1).toString();
+      var dd  = date.getDate().toString();
+      var mmChars = mm.split('');
+      var ddChars = dd.split('');
+      return (ddChars[1]?dd:"0"+ddChars[0]) + '.' + (mmChars[1]?mm:"0"+mmChars[0]) + '.' + yyyy;
+    }
+  -
+    const commentFormatDate = (dateString) => {
+      var date = new Date(dateString);
+      date = `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`;
+      return date;
     }
   main
     section.post
