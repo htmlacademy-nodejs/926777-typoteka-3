@@ -7,14 +7,15 @@ const {
   ExitCode
 } = require(`../../constants`);
 
-const createApiRouter = require(`../api`);
+const createApiRouter = require(`../api/api`);
 const {getLogger} = require(`../lib/logger`);
 const sequelize = require(`../lib/sequelize`);
+
+const DEFAULT_PORT = 3000;
 
 const {DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT} = process.env;
 const somethingIsNotDefined = [DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT].some((it) => it === undefined);
 
-const DEFAULT_PORT = 3000;
 const logger = getLogger({name: `api`});
 
 const createApp = async () => {

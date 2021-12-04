@@ -15,6 +15,7 @@ const {
 
 const DEFAULT_COUNT = 1;
 const MAX_COMMENTS = 4;
+const LIMIT = 1000;
 const FILE_NAME = `fill-db.sql`;
 const FILE_SENTENCES_PATH = `./data/sentences.txt`;
 const FILE_TITLES_PATH = `./data/titles.txt`;
@@ -131,7 +132,7 @@ module.exports = {
     ${commentValues};
     ALTER TABLE comments ENABLE TRIGGER ALL;`;
 
-    if (args > 1000) {
+    if (args > LIMIT) {
       console.info(chalk.red(`Limit exceeded. Maximum 1000`));
     } else {
       try {

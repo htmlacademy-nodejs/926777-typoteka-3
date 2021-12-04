@@ -5,7 +5,6 @@ const chalk = require(`chalk`);
 const initDatabase = require(`../lib/init-db`);
 const {getLogger} = require(`../lib/logger`);
 const passwordUtils = require(`../lib/password`);
-
 const sequelize = require(`../lib/sequelize`);
 
 const {
@@ -13,8 +12,6 @@ const {
   shuffle,
   randomDate
 } = require(`../../utils`);
-
-const logger = getLogger({name: `api`});
 
 const DEFAULT_COUNT = 1;
 const MAX_COMMENTS = 4;
@@ -27,6 +24,8 @@ const PictureRestrict = {
   MIN: 1,
   MAX: 16,
 };
+
+const logger = getLogger({name: `api`});
 
 const getRandomSubarray = (items) => {
   items = items.slice();
