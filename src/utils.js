@@ -1,5 +1,7 @@
 'use strict';
 
+const {ADMIN} = require(`./constants`);
+
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -25,9 +27,7 @@ const randomDate = (date1, date2) => {
   date2 = new Date(dateEnd).getTime();
   if (date1 > date2) {
     return new Date(randomValueBetween(date2, date1)).toLocaleDateString();
-  } else {
-    return new Date(randomValueBetween(date1, date2)).toLocaleDateString();
-  }
+  } return new Date(randomValueBetween(date1, date2)).toLocaleDateString();
 };
 
 const ensureArray = (value) => Array.isArray(value) ? value : [value];
@@ -41,7 +41,7 @@ const asyncMiddleware = (fn) => {
 
 const getAdmin = (user) => {
   let admin = false;
-  if (user && user.id === 1) {
+  if (user && user.id === ADMIN) {
     admin = true;
   }
   return admin;

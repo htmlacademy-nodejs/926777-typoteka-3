@@ -6,6 +6,12 @@ const USER_ARGV_INDEX = 2;
 
 const MAX_ID_LENGTH = 6;
 
+const API_PREFIX = `/api`;
+
+const ARTICLES_PER_PAGE = 8;
+
+const ADMIN = 1;
+
 const ExitCode = {
   ERROR: 1,
   SUCCESS: 0,
@@ -28,16 +34,13 @@ const HttpMethod = {
   DELETE: `DELETE`
 };
 
-const API_PREFIX = `/api`;
-
 const Env = {
   DEVELOPMENT: `development`,
   PRODUCTION: `production`
 };
 
-const ARTICLES_PER_PAGE = 8;
-
 module.exports = {
+  ADMIN,
   DEFAULT_COMMAND,
   USER_ARGV_INDEX,
   MAX_ID_LENGTH,

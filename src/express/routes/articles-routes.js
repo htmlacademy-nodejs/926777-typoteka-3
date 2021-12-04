@@ -7,12 +7,12 @@ const {nanoid} = require(`nanoid`);
 const csrf = require(`csurf`);
 const api = require(`../api`).getAPI();
 const {asyncMiddleware, ensureArray, getAdmin} = require(`../../utils`);
-const {ARTICLES_PER_PAGE} = require(`../../constants`);
+const {ARTICLES_PER_PAGE, HttpCode} = require(`../../constants`);
 const auth = require(`../middlewares/auth`);
 
-const csrfProtection = csrf();
-
 const UPLOAD_DIR = `../../service/upload/img/`;
+
+const csrfProtection = csrf();
 
 const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
 const articlesRouter = new Router();
@@ -158,7 +158,7 @@ articlesRouter.post(`/:id`, asyncMiddleware(async (req, res) => {
     await api.deleteArticle(id);
     res.redirect(`/my`);
   } catch (error) {
-    res.status(400).render(`errors/404`);
+    res.status(HttpCode.BAD_REQUEST).render(`errors/404`);
   }
 }));
 
@@ -183,7 +183,7 @@ articlesRouter.post(`/:id/comments/:commentId`, asyncMiddleware(async (req, res)
     await api.deleteComment(id, commentId);
     res.redirect(`/my/comments`);
   } catch (error) {
-    res.status(400).render(`errors/404`);
+    res.status(HttpCode.BAD_REQUEST).render(`errors/404`);
   }
 }));
 

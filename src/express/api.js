@@ -15,11 +15,6 @@ class API {
     });
   }
 
-  async _load(url, options) {
-    const response = await this._http.request({url, ...options});
-    return response.data;
-  }
-
   getArticles({offset, limit, comments}) {
     return this._load(`/articles`, {params: {offset, limit, comments}});
   }
@@ -32,24 +27,21 @@ class API {
     return this._load(`/articles/${id}`, {params: {comments}});
   }
 
-  search(query) {
-    return this._load(`/search`, {params: {query}});
+  getRecentComments() {
+    return this._load(`/articles/comments`);
   }
 
   async getCategories(count) {
     return this._load(`/categories`, {params: {count}});
   }
 
+  search(query) {
+    return this._load(`/search`, {params: {query}});
+  }
+
   async createArticle(data) {
     return this._load(`/articles`, {
       method: HttpMethod.POST,
-      data
-    });
-  }
-
-  editArticle(id, data) {
-    return this._load(`/articles/${id}`, {
-      method: HttpMethod.PUT,
       data
     });
   }
@@ -75,14 +67,17 @@ class API {
     });
   }
 
-  getRecentComments() {
-    return this._load(`/articles/comments`);
-  }
-
   createCategory(data) {
     return this._load(`/categories/add`, {
       method: HttpMethod.POST,
       data,
+    });
+  }
+
+  editArticle(id, data) {
+    return this._load(`/articles/${id}`, {
+      method: HttpMethod.PUT,
+      data
     });
   }
 
@@ -111,6 +106,10 @@ class API {
     });
   }
 
+  async _load(url, options) {
+    const response = await this._http.request({url, ...options});
+    return response.data;
+  }
 }
 
 const defaultAPI = new API(defaultUrl, TIMEOUT);
